@@ -479,3 +479,9 @@ export default defineConfig({
 - [ ] 集成分支状态。
 - [ ] 已知问题与未做项。
 - [ ] omp 是否可以开始 rebase / 集成。
+
+---
+
+## 9. 下一步（P1）
+
+P0 完成后的 P1 任务见 [P1 并行实施](./p1-parallel.md)：Claude Code 负责 SEO / Feed / 构建集成，omp 负责分页 / 标签 / 归档 / 搜索页。agy 的前端设计任务见 [agy 前端设计任务书](./agy-frontend-design.md)。

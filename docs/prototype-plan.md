@@ -49,6 +49,7 @@
 |---|---|---|---|
 | Foundation + Content + Home + Integration | Claude Code | Task 1–5、Task 9 | [Claude Code P0](./plans/claude-code-p0.md) |
 | Content Routes + Article Reading | omp | Task 6–8 + 自己的 E2E | [omp P0](./plans/omp-p0.md) |
+| Frontend Design Refinement | agy | 视觉/响应式/暗色/可访问性打磨（P0 基线） | [agy 前端设计任务书](./plans/agy-frontend-design.md) |
 
 **依赖与检查点**
 
@@ -56,6 +57,7 @@
 - 内容模型在 foundation 中；C1 的 12 篇示例内容随 Claude 的 `feat/p0-claude-home` 交付，omp 的最终列表/文章测试要 rebase 到该分支。
 - omp 在 foundation 就绪前可以先写 `prose.css`、`PostLayout`、TOC、文章页等不依赖构建的文件；不要创建 `package.json` 或改共享文件。
 - 共享契约（`site`、`PostSummary`、`BaseLayout` props、`PostCard/PostList`、`Icon`）在两份执行文档中一致；变更必须通知对方。
+- P0 完成后的下一步见 [P1 并行实施](./plans/p1-parallel.md)。
 - 集成由 Claude Code 在 `feat/p0-integration` 完成，跑全量 P0 检查后交给用户确认。
 
 ---

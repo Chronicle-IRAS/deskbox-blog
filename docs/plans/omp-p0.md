@@ -478,3 +478,9 @@ $env:PLAYWRIGHT_BASE_URL='http://localhost:4322'; npm run test:e2e
 - [ ] 已知问题。
 - [ ] 是否已 rebase 到最新 foundation。
 - [ ] Claude 可以开始集成。
+
+---
+
+## 9. 下一步（P1）
+
+P0 完成后的 P1 任务见 [P1 并行实施](./p1-parallel.md)：omp 负责分页、标签、归档、搜索页；Claude Code 负责 SEO / Feed / 构建集成。agy 负责前端视觉设计与 P1 组件视觉规格。
