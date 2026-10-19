@@ -36,16 +36,28 @@ import '../styles/prose.css';
 
 <style>
   .about {
+    max-width: calc(var(--measure) + 2 * var(--gutter));
     margin-inline: auto;
+    padding-block-start: clamp(2.5rem, 6vw, 4.5rem);
+    padding-inline: var(--gutter);
+  }
+
+  .about h1 {
+    padding-block-end: var(--space-4);
+    border-bottom: 1px solid var(--border);
   }
 
   .about__links {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-3) var(--space-5);
-    margin: 0;
+    gap: var(--space-3);
+    margin: var(--space-4) 0 0;
     padding: 0;
     list-style: none;
+  }
+
+  .about__links li {
+    margin: 0;
   }
 
   .about__links a {
@@ -53,5 +65,23 @@ import '../styles/prose.css';
     align-items: center;
     gap: var(--space-2);
     min-height: 44px;
+    padding: 0 var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--fg);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .about__links a:hover {
+    color: var(--accent);
+    border-color: var(--border-strong);
+    background: var(--surface-muted);
   }
 </style>

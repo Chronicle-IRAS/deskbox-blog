@@ -7,12 +7,15 @@ interface Props {
 
 const { headings } = Astro.props;
 const items = headings.filter(
-  (heading) => heading.depth === 2 || heading.depth === 3,
+  (heading) =>
+    (heading.depth === 2 || heading.depth === 3) &&
+    heading.slug !== 'footnote-label',
 );
 ---
 
 {items.length >= 3 && (
   <nav class="toc" aria-label="本文目录" data-toc>
+    <p class="toc__title" aria-hidden="true">本文目录</p>
     <ol class="toc__list">
       {items.map((heading) => (
         <li class={`toc__item toc__item--h${heading.depth}`}>
@@ -28,7 +31,19 @@ const items = headings.filter(
 <style>
   .toc {
     font-size: var(--text-sm);
-    line-height: 1.6;
+    line-height: 1.5;
+  }
+
+  .toc__title {
+    margin: 0 0 var(--space-3);
+    color: var(--fg);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+
+  :global(.post__toc-mobile) .toc__title {
+    display: none;
   }
 
   .toc__list {
@@ -40,16 +55,20 @@ const items = headings.filter(
 
   .toc__link {
     display: block;
-    padding: 0.3rem 0 0.3rem 1rem;
+    padding: 0.35rem 0 0.35rem var(--space-4);
     border-inline-start: 2px solid transparent;
     margin-inline-start: -1px;
     color: var(--fg-muted);
     text-decoration: none;
-    transition: color var(--duration-fast) var(--ease-out);
+    overflow-wrap: break-word;
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out);
   }
 
   .toc__item--h3 .toc__link {
-    padding-inline-start: 2rem;
+    padding-inline-start: var(--space-6);
+    font-size: var(--text-xs);
   }
 
   .toc__link:hover {
@@ -63,6 +82,7 @@ const items = headings.filter(
 
   .toc__link[aria-current="location"] {
     color: var(--accent);
+    font-weight: 500;
     border-inline-start-color: var(--accent);
   }
 
