@@ -4,6 +4,7 @@
 **日期：** 2026-10-19  
 **分支：** `feat/agy-frontend`（独立工作区 `../博客-agy`，端口 `4323`）  
 **基线：** `main` @ `568511b` / `feat/p1-integration` @ `624050f`（含 P0 + omp P1 阅读路由 + Claude P1 SEO/Pagefind）  
+**合并：** `main` @ `9b50e66`（`merge: 合并 agy P2 视觉调整`）  
 **关联：** [三智能体分工](./three-agent-division.md) · [前端设计任务书](./agy-frontend-design.md) · [视觉与交互设计](../design.md) · [设计系统](../../design-system/deskbox-blog/MASTER.md)
 
 ---

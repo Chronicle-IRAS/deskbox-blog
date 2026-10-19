@@ -1,6 +1,6 @@
 # 三智能体分工：Claude Code / omp / agy
 
-**基线：** `main` @ `f3b5bc5`（P0 完成；omp P1 已合并）  
+**基线：** `main` @ `9b50e66`（P0/P1 完成；agy P2 视觉已合并）  
 **目标：** 明确当前 P1 收尾与下一轮 P2 的分工、所有权、共享契约和集成顺序。  
 **关联：** [P1 并行实施](./p1-parallel.md) · [agy 前端设计任务书](./agy-frontend-design.md) · [omp P1 报告](./omp-p1-report.md) · [P0 集成报告](./p0-integration-report.md)
 
@@ -13,9 +13,9 @@
 | P0 | 完成 | `feat/p0-integration`（已合并） | 首页、列表、文章、About、404、styleguide |
 | Claude P1 | 完成并合并 | `feat/p1-claude-seo` → `feat/p1-integration` | SEO、RSS、sitemap、robots、Pagefind 构建、标签映射、导航激活态 |
 | omp P1 | 完成并合并 | `feat/p1-omp-reading` → `main` | 分页、标签、归档、搜索页 |
-| agy P1 | 完成并合并 | `feat/agy-frontend` → `feat/p1-integration` | P0/P1 视觉调整、token、styleguide |
+| agy P1/P2 | 完成并合并 | `feat/agy-frontend` → `main` @ `9b50e66` | P0/P1/P2 视觉调整、token、styleguide、视觉 QA |
 
-**当前 `main` 能力（`main` @ `5b56973`）**
+**当前 `main` 能力（`main` @ `9b50e66`）**
 
 - 分页、标签页、归档、搜索页、文章标签链接、`data-pagefind-body`。
 - SEO 组件、JSON-LD、RSS、sitemap、robots、Pagefind build 集成。
