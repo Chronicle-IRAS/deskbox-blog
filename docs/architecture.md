@@ -757,7 +757,10 @@ Sitemap: http://localhost:4321/sitemap-index.xml
 ## 22. 相关文档
 
 - [原型实施计划](./prototype-plan.md)
+- [Claude Code P0 实施文档](./plans/claude-code-p0.md)
+- [omp P0 实施文档](./plans/omp-p0.md)
 - [视觉与交互设计](./design.md)
+- [Git 工作流与提交规范](./git-workflow.md)
 - [设计系统](../design-system/deskbox-blog/MASTER.md)
 - [ADR 0001：静态站点与 Astro](./adr/0001-static-site-astro.md)
 - [ADR 0002：内容存放在 Git](./adr/0002-content-in-git.md)

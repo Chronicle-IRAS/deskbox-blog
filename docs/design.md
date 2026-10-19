@@ -3,7 +3,8 @@
 **状态：** 原型设计 v2  
 **日期：** 2026-10-18  
 **设计系统：** [DeskBox Blog Design System](../design-system/deskbox-blog/MASTER.md)（颜色、字体、间距、组件规格以该文件为准）  
-**架构：** [架构设计](./architecture.md) · [原型实施计划](./prototype-plan.md)
+**架构：** [架构设计](./architecture.md) · [原型实施计划](./prototype-plan.md)  
+**并行实施：** [Claude Code P0](./plans/claude-code-p0.md) · [omp P0](./plans/omp-p0.md)
 
 **原型范围：** P0 先做首页、文章列表、文章页、About、404、主题切换、响应式、TOC、代码复制；P1 再加标签、归档、分页、搜索、RSS。  
 **不在原型内：** 部署、域名、CI/CD、评论、分析、多语言、OG 图生成。

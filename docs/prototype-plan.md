@@ -41,6 +41,25 @@
 
 ---
 
+## 1.5 并行实施拆分
+
+两条轨道使用**独立 worktree**，文件所有权不重叠：
+
+| 轨道 | 执行者 | 负责任务 | 文档 |
+|---|---|---|---|
+| Foundation + Content + Home + Integration | Claude Code | Task 1–5、Task 9 | [Claude Code P0](./plans/claude-code-p0.md) |
+| Content Routes + Article Reading | omp | Task 6–8 + 自己的 E2E | [omp P0](./plans/omp-p0.md) |
+
+**依赖与检查点**
+
+- Task 1–4 是共享 foundation：Claude Code 先落地并提交 `feat/p0-claude-foundation`，omp 随后 rebase。
+- 内容模型在 foundation 中；C1 的 12 篇示例内容随 Claude 的 `feat/p0-claude-home` 交付，omp 的最终列表/文章测试要 rebase 到该分支。
+- omp 在 foundation 就绪前可以先写 `prose.css`、`PostLayout`、TOC、文章页等不依赖构建的文件；不要创建 `package.json` 或改共享文件。
+- 共享契约（`site`、`PostSummary`、`BaseLayout` props、`PostCard/PostList`、`Icon`）在两份执行文档中一致；变更必须通知对方。
+- 集成由 Claude Code 在 `feat/p0-integration` 完成，跑全量 P0 检查后交给用户确认。
+
+---
+
 ## 2. 示例内容矩阵
 
 > 原型内容只用于验证版式，不代表作者真实经历。标题可替换为占位文案。
