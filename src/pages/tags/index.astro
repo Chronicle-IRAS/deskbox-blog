@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TagList from '../../components/TagList.astro';
+import { pageTitle } from '../../data/site';
+import { tags } from '../../data/tags';
+import { getPublishedPosts } from '../../lib/posts';
+
+const posts = await getPublishedPosts();
+const counts = new Map<string, number>();
+
+for (const post of posts) {
+  for (const tag of post.data.tags) {
+    counts.set(tag, (counts.get(tag) ?? 0) + 1);
+  }
+}
+
+const items = tags
+  .map((tag) => ({ ...tag, count: counts.get(tag.name) ?? 0 }))
+  .filter((tag) => tag.count > 0);
+---
+
+<BaseLayout
+  title={pageTitle('标签')}
+  description="按标签浏览 DeskBox 的文章。"
+>
+  <section class="tags-index">
+    <header class="tags-index__header">
+      <h1>标签</h1>
+      <p>{items.length} 个标签</p>
+    </header>
+
+    <TagList items={items} />
+  </section>
+</BaseLayout>
+
+<style>
+  .tags-index {
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .tags-index__header {
+    padding-block-end: var(--space-4);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tags-index__header h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .tags-index__header p {
+    margin: var(--space-2) 0 0;
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+</style>

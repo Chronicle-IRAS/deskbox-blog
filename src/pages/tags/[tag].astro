@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostList from '../../components/PostList.astro';
+import { pageTitle } from '../../data/site';
+import { tags } from '../../data/tags';
+import type { PostSummary } from '../../lib/posts';
+import { getPublishedPosts, toPostSummary } from '../../lib/posts';
+
+interface Tag {
+  name: string;
+  slug: string;
+  description?: string;
+}
+
+interface Props {
+  tag: Tag;
+  count: number;
+  posts: PostSummary[];
+}
+
+export async function getStaticPaths() {
+  const allPosts = await getPublishedPosts();
+  const counts = new Map<string, number>();
+
+  for (const post of allPosts) {
+    for (const tag of post.data.tags) {
+      counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    }
+  }
+
+  return tags
+    .map((tag) => ({
+      tag,
+      count: counts.get(tag.name) ?? 0,
+    }))
+    .filter(({ count }) => count > 0)
+    .map(({ tag, count }) => ({
+      params: { tag: tag.slug },
+      props: {
+        tag,
+        count,
+        posts: allPosts
+          .filter((post) => post.data.tags.includes(tag.name))
+          .map(toPostSummary),
+      },
+    }));
+}
+
+const { tag, count, posts } = Astro.props as Props;
+---
+
+<BaseLayout
+  title={pageTitle(`#${tag.name}`)}
+  description={tag.description ?? `标签 ${tag.name} 下的文章。`}
+>
+  <section class="tag-page">
+    <header class="tag-page__header">
+      <h1>#{tag.name}</h1>
+      <p>
+        {tag.description}
+        <span aria-hidden="true"> · </span>
+        {count} 篇
+      </p>
+    </header>
+
+    <PostList posts={posts} emptyText="这个标签下还没有文章。" />
+  </section>
+</BaseLayout>
+
+<style>
+  .tag-page {
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .tag-page__header {
+    padding-block-end: var(--space-4);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tag-page__header h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .tag-page__header p {
+    margin: var(--space-2) 0 0;
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+</style>
