@@ -13,8 +13,8 @@
 |---|---|---|
 | `feat/p0-claude-foundation` | `bb413f1` | Astro 7 骨架、内容模型、共享契约、样式与外壳 |
 | `feat/p0-claude-home` | `7214a02`…`79bc010` | 依赖补充、示例内容、首页、单元/E2E 测试 |
-| `feat/p0-omp-pages` | `cbeea00`、`10e50cc` | 列表、文章页、About、404、styleguide |
-| `feat/p0-integration` | `0af862f`、`845f92a` | 合并 omp 分支；修复 PostCard 窄屏溢出 |
+| `feat/p0-omp-pages` | `cbeea00`、`10e50cc`、`0fd8c6d`、`f6a0d21` | 列表、文章页、About、404、styleguide；修复列表/文章 gutter 与目录测试 |
+| `feat/p0-integration` | `0af862f`、`845f92a`、`547e1bf`、`d0da5ce` | 合并 omp 分支；修复 PostCard 窄屏溢出；并入 omp 修复 |
 
 两份计划文档中的共享契约未发生类型或 props 变更。
 
@@ -27,8 +27,8 @@
 | `npm run check` | 0 errors，2 hints（zod `.url()` 与 `execCommand` 弃用提示） |
 | `npm run test` | 3 个文件，19/19 通过 |
 | `npm run build` | 成功，17 个页面（12 篇文章 + 首页/列表/About/404/styleguide） |
-| E2E（preview，端口 4330） | 14/15 通过 |
-| E2E（dev webServer） | 13/15 通过 |
+| E2E（dev webServer） | 15/15 通过 |
+| E2E（preview，端口 4330） | 修复后未复跑；dev webServer 全量通过 |
 | Lighthouse（首页 / 文章页） | Accessibility / Best Practices / SEO 均 100 |
 | 手工检查 | 375 无横向滚动（修复后）、主题切换持久化、TOC 锚点偏移、代码复制反馈、脚注、8 列表格 |
 
@@ -46,21 +46,19 @@
 
 ## 3. 已知问题
 
-### 3.1 需要 omp 修复
+### 3.1 已由 omp 修复
 
-1. **`tests/e2e/post.spec.ts:16` 选择器错误**
-   - `page.locator('[data-toc]').first()` 命中移动端 `<details>` 内的 TOC；桌面视口下该节点 `display: none`，测试失败。
-   - 建议改为 `.post__toc [data-toc]`，或使用 `getByRole('complementary', { name: '文章目录' })`。
-   - 应用本身正常：桌面 TOC 可见，锚点与高亮已手工验证。
+1. **`tests/e2e/post.spec.ts` 选择器**
+   - 原 `[data-toc]` 命中移动端 `<details>` 内隐藏的 TOC；已改为 `.post__toc [data-toc]`，桌面视口下断言可见。
+   - 全量 E2E 通过。
 
-2. **`tests/e2e/a11y.spec.ts` 在 dev 下访问未知路由不稳定**
-   - 报错 `Execution context was destroyed, most likely because of a navigation`。
-   - 同一测试在 `preview` 下通过；建议等待 `networkidle` 或对 404 使用 `preview` 验证。
+2. **`tests/e2e/a11y.spec.ts` 404 路径**
+   - 改用未知路由 `/does-not-exist/` 验证自定义 404，不再用 `/404` 当作页面 URL。
+   - dev webServer 下全量 E2E 通过。
 
-3. **列表页与文章页缺少 gutter**
-   - `.blog-index` 与 `.post` 只有 `max-width`，没有 `padding-inline: var(--gutter)`。
-   - 375px 下正文与标题贴边（`left: 0`），不符合设计 §5 的 24px gutter。
-   - 建议给两个外层容器补内边距，或改用 `.container`。
+3. **列表页与文章页 gutter**
+   - `.blog-index` 与 `.post` 均补充 `padding-inline: var(--gutter)`；`.post` 同时补偿最大宽度。
+   - 375px 横向溢出已归零。
 
 ### 3.2 已由 Claude 修复
 
@@ -84,11 +82,11 @@
 
 ## 5. 交接
 
-- omp 修复 §3.1 后，重新运行：
+- 最新全量验证：
   ```bash
-  npm run check
-  npm run test
-  npm run build
-  PLAYWRIGHT_BASE_URL=http://localhost:4321 npm run test:e2e
+  npm run check   # 0 errors, 2 hints
+  npm run test    # 19/19
+  npm run build   # 17 pages
+  npm run test:e2e # 15/15
   ```
-- 全量通过后由用户决定是否合并到 `main`。
+- `feat/p0-integration` 已通过上述检查；由用户决定是否合并到 `main`。
