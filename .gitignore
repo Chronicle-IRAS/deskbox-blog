@@ -1,0 +1,53 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+.astro/
+
+# 测试产物
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# 环境变量
+.env
+.env.*
+!.env.example
+
+# 测试覆盖率
+coverage/
+.nyc_output/
+
+# 缓存与日志
+.cache/
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 环境变量补充
+.env.local
+.env.*.local
+
+# 编辑器 / 系统
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.claude/settings.local.json
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+desktop.ini
