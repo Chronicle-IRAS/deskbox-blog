@@ -3,7 +3,7 @@ import { site } from '../data/site';
 import Icon from './Icon.astro';
 ---
 
-<footer class="site-footer">
+<footer class="site-footer" data-pagefind-ignore>
   <div class="container footer-inner">
     <p>{site.footer}</p>
     <ul class="social-list">
@@ -27,13 +27,14 @@ import Icon from './Icon.astro';
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-4);
+    gap: var(--space-3) var(--space-5);
   }
 
   .social-list {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-4);
+    align-items: center;
+    gap: var(--space-2) var(--space-5);
     padding: 0;
     margin: 0;
     list-style: none;
@@ -44,6 +45,7 @@ import Icon from './Icon.astro';
     align-items: center;
     gap: var(--space-2);
     min-height: 44px;
+    padding-inline: var(--space-1);
     color: var(--fg-muted);
     text-decoration: none;
     transition: color var(--duration-fast) var(--ease-out);

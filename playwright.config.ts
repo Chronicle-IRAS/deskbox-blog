@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:4321';
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:4399';
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -16,8 +16,10 @@ export default defineConfig({
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
-        command: 'npm run dev',
-        port: 4321,
-        reuseExistingServer: true,
+        command:
+          'npm run build && npm run preview -- --host 127.0.0.1 --port 4399 --ignore-lock',
+        url: 'http://127.0.0.1:4399',
+        reuseExistingServer: false,
+        timeout: 180_000,
       },
 });

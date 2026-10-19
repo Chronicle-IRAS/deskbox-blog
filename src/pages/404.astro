@@ -24,17 +24,21 @@ import { pageTitle } from '../data/site';
 
 <style>
   .not-found {
-    max-width: var(--measure);
+    max-width: calc(var(--measure) + 2 * var(--gutter));
     margin-inline: auto;
-    padding-block: var(--space-8);
+    padding-block-start: clamp(3rem, 8vw, 6rem);
+    padding-block-end: var(--space-6);
+    padding-inline: var(--gutter);
   }
 
   .not-found__code {
     margin: 0;
     color: var(--accent);
     font-family: var(--font-display);
-    font-size: clamp(4rem, 18vw, 9rem);
-    line-height: 0.9;
+    font-size: clamp(3.5rem, 12vw, 6.5rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
   }
 
   .not-found h1 {
@@ -43,12 +47,15 @@ import { pageTitle } from '../data/site';
     font-size: var(--text-h1);
     font-weight: 600;
     line-height: 1.1;
+    text-wrap: balance;
   }
 
   .not-found__text {
-    margin: var(--space-4) 0 0;
+    max-width: 36ch;
+    margin: var(--space-3) 0 0;
     color: var(--fg-muted);
     font-size: var(--text-base);
+    line-height: var(--leading-base);
   }
 
   .not-found__actions {
@@ -56,11 +63,14 @@ import { pageTitle } from '../data/site';
     flex-wrap: wrap;
     gap: var(--space-3);
     margin-block-start: var(--space-6);
+    padding-block-start: var(--space-5);
+    border-top: 1px solid var(--border);
   }
 
   .not-found__action {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     min-height: 44px;
     padding: 0 var(--space-5);
     border: 1px solid var(--border-strong);
@@ -71,12 +81,14 @@ import { pageTitle } from '../data/site';
     text-decoration: none;
     transition:
       background-color var(--duration-fast) var(--ease-out),
-      border-color var(--duration-fast) var(--ease-out);
+      border-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out);
   }
 
   .not-found__action:hover {
     background: var(--surface-muted);
     border-color: var(--fg);
+    color: var(--fg);
   }
 
   .not-found__action:focus-visible {
@@ -93,6 +105,7 @@ import { pageTitle } from '../data/site';
   .not-found__action--primary:hover {
     border-color: var(--accent-solid-hover);
     background: var(--accent-solid-hover);
+    color: var(--on-accent);
   }
 
   @media (prefers-reduced-motion: reduce) {

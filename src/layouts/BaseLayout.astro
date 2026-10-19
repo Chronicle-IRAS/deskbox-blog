@@ -2,22 +2,55 @@
 import '../styles/tokens.css';
 import '../styles/fonts.css';
 import '../styles/global.css';
+import Seo from '../components/Seo.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import { getPublishedPosts } from '../lib/posts';
 
 interface Props {
   title: string;
   description: string;
-  activeNav?: 'home' | 'blog' | 'about';
+  activeNav?: 'home' | 'blog' | 'tags' | 'archive' | 'about' | 'search';
   noindex?: boolean;
   image?: string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  keywords?: string[];
 }
 
-const { title, description, activeNav, noindex = false, image } = Astro.props;
+const {
+  title,
+  description,
+  activeNav,
+  noindex = false,
+  image,
+  type,
+  publishedTime,
+  modifiedTime,
+  keywords,
+} = Astro.props;
 
-const base = Astro.site ?? new URL('http://localhost:4321');
-const canonical = new URL(Astro.url.pathname, base);
-const ogImage = image ? new URL(image, base) : undefined;
+const pathname = Astro.url.pathname;
+const isArticlePath = /^\/blog\/[^/]+\/$/.test(pathname);
+const seoType = type ?? (isArticlePath ? 'article' : 'website');
+
+let seoImage = image;
+let seoPublishedTime = publishedTime;
+let seoModifiedTime = modifiedTime;
+let seoKeywords = keywords;
+
+if (seoType === 'article' && (!seoPublishedTime || !seoKeywords)) {
+  const slug = pathname.split('/')[2];
+  const post = (await getPublishedPosts()).find((entry) => entry.data.slug === slug);
+
+  if (post) {
+    seoPublishedTime ??= post.data.pubDate.toISOString();
+    seoModifiedTime ??= post.data.updatedDate?.toISOString();
+    seoKeywords ??= post.data.tags;
+    seoImage ??= post.data.cover?.src;
+  }
+}
 ---
 
 <!doctype html>
@@ -25,16 +58,16 @@ const ogImage = image ? new URL(image, base) : undefined;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:locale" content="zh_CN" />
-    {ogImage && <meta property="og:image" content={ogImage} />}
-    {noindex && <meta name="robots" content="noindex, follow" />}
+    <Seo
+      title={title}
+      description={description}
+      image={seoImage}
+      type={seoType}
+      publishedTime={seoPublishedTime}
+      modifiedTime={seoModifiedTime}
+      keywords={seoKeywords}
+      noindex={noindex}
+    />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script is:inline src="/scripts/theme-init.js"></script>
   </head>

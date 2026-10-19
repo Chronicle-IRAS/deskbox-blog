@@ -3,25 +3,40 @@ import { site, type NavItem } from '../data/site';
 import Icon from './Icon.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
+type ActiveNav = 'home' | 'blog' | 'tags' | 'archive' | 'about' | 'search';
+
 interface Props {
-  activeNav?: 'home' | 'blog' | 'about';
+  activeNav?: ActiveNav;
 }
 
 const { activeNav } = Astro.props;
 
-const activeHref =
-  activeNav === 'home'
-    ? '/'
-    : activeNav === 'blog'
-      ? '/blog/'
-      : activeNav === 'about'
-        ? '/about/'
-        : undefined;
+const navHrefs: Record<ActiveNav, string> = {
+  home: '/',
+  blog: '/blog/',
+  tags: '/tags/',
+  archive: '/archive/',
+  about: '/about/',
+  search: '/search/',
+};
+
+function inferActiveNav(pathname: string): ActiveNav | undefined {
+  if (pathname === '/') return 'home';
+  if (pathname.startsWith('/blog/')) return 'blog';
+  if (pathname.startsWith('/tags/')) return 'tags';
+  if (pathname.startsWith('/archive/')) return 'archive';
+  if (pathname.startsWith('/about/')) return 'about';
+  if (pathname.startsWith('/search/')) return 'search';
+  return undefined;
+}
+
+const currentNav = activeNav ?? inferActiveNav(Astro.url.pathname);
+const activeHref = currentNav ? navHrefs[currentNav] : undefined;
 
 const isActive = (item: NavItem) => item.href === activeHref;
 ---
 
-<header class="site-header">
+<header class="site-header" data-pagefind-ignore>
   <div class="container header-inner">
     <a class="brand" href="/">{site.name}</a>
 
@@ -58,17 +73,21 @@ const isActive = (item: NavItem) => item.href === activeHref;
 <style>
   .header-inner {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-5);
-    height: 64px;
+    gap: var(--space-2) var(--space-5);
+    min-height: 64px;
   }
 
   .brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     color: var(--fg);
     font-family: var(--font-display);
     font-size: var(--text-lg);
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     text-decoration: none;
   }
 
@@ -78,7 +97,9 @@ const isActive = (item: NavItem) => item.href === activeHref;
 
   .desktop-nav {
     display: flex;
-    gap: var(--space-5);
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) var(--space-5);
     margin-left: auto;
   }
 
@@ -87,6 +108,7 @@ const isActive = (item: NavItem) => item.href === activeHref;
     display: inline-flex;
     align-items: center;
     min-height: 44px;
+    padding-inline: var(--space-1);
     color: var(--fg-muted);
     font-size: var(--text-sm);
     text-decoration: none;
@@ -98,13 +120,18 @@ const isActive = (item: NavItem) => item.href === activeHref;
     color: var(--fg);
   }
 
+  .nav-link:hover::after,
   .nav-link[aria-current='page']::after {
     content: '';
     position: absolute;
-    right: 0;
+    right: var(--space-1);
     bottom: 6px;
-    left: 0;
+    left: var(--space-1);
     height: 2px;
+    background: var(--border-strong);
+  }
+
+  .nav-link[aria-current='page']::after {
     background: var(--accent);
   }
 
@@ -125,27 +152,35 @@ const isActive = (item: NavItem) => item.href === activeHref;
     width: 44px;
     height: 44px;
     color: var(--fg-muted);
+    border: 1px solid transparent;
     border-radius: var(--radius-md);
     cursor: pointer;
     list-style: none;
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out);
   }
 
   .mobile-menu summary::-webkit-details-marker {
     display: none;
   }
 
-  .mobile-menu summary:hover {
+  .mobile-menu summary:hover,
+  .mobile-menu[open] summary {
     color: var(--fg);
     background: var(--surface-muted);
+    border-color: var(--border);
   }
 
   .mobile-nav {
     position: absolute;
     top: calc(100% + var(--space-2));
     right: 0;
+    z-index: 20;
     display: flex;
     flex-direction: column;
-    min-width: 160px;
+    min-width: 168px;
     padding: var(--space-2);
     background: var(--surface);
     border: 1px solid var(--border);
@@ -156,11 +191,20 @@ const isActive = (item: NavItem) => item.href === activeHref;
   .mobile-nav .nav-link {
     justify-content: flex-start;
     padding-inline: var(--space-3);
+    border-radius: var(--radius-sm);
+  }
+
+  .mobile-nav .nav-link:hover {
+    background: var(--surface-muted);
+  }
+
+  .mobile-nav .nav-link:hover::after {
+    display: none;
   }
 
   .mobile-nav .nav-link[aria-current='page']::after {
     right: var(--space-3);
-    bottom: 2px;
+    bottom: 4px;
     left: var(--space-3);
   }
 
