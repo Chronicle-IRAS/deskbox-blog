@@ -1,0 +1,43 @@
+---
+import { render } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+import type { BlogEntry, PostSummary } from '../../lib/posts';
+import {
+  getPostSlug,
+  getPublishedPosts,
+  toPostSummary,
+} from '../../lib/posts';
+
+interface Props {
+  post: BlogEntry;
+  prev?: PostSummary;
+  next?: PostSummary;
+}
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+
+  return posts.map((post, index) => ({
+    params: { slug: getPostSlug(post) },
+    props: {
+      post,
+      prev: posts[index + 1] ? toPostSummary(posts[index + 1]) : undefined,
+      next: posts[index - 1] ? toPostSummary(posts[index - 1]) : undefined,
+    },
+  }));
+}
+
+const { post, prev, next } = Astro.props as Props;
+const { Content, headings } = await render(post);
+const summary = toPostSummary(post);
+---
+
+<PostLayout
+  post={post}
+  summary={summary}
+  headings={headings}
+  prev={prev}
+  next={next}
+>
+  <Content />
+</PostLayout>

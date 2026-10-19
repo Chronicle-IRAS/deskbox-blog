@@ -1,0 +1,341 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { pageTitle } from '../data/site';
+---
+
+<BaseLayout
+  title={pageTitle('Styleguide')}
+  description="设计系统参考页"
+  noindex
+>
+  <div class="sg">
+    <header class="sg__header">
+      <h1>Styleguide</h1>
+      <p>P0 视觉 token 与组件参考。此页 noindex，不进入导航。</p>
+    </header>
+
+    <section class="sg__section" aria-labelledby="sg-color">
+      <h2 id="sg-color">颜色</h2>
+      <div class="sg__swatches">
+        <div class="sg__swatch sg__swatch--bg">
+          <span>bg</span>
+        </div>
+        <div class="sg__swatch sg__swatch--surface">
+          <span>surface</span>
+        </div>
+        <div class="sg__swatch sg__swatch--muted">
+          <span>surface-muted</span>
+        </div>
+        <div class="sg__swatch sg__swatch--fg">
+          <span>fg</span>
+        </div>
+        <div class="sg__swatch sg__swatch--accent">
+          <span>accent</span>
+        </div>
+        <div class="sg__swatch sg__swatch--solid">
+          <span>accent-solid</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg__section" aria-labelledby="sg-type">
+      <h2 id="sg-type">字体</h2>
+      <p class="sg__display">DeskBox</p>
+      <p class="sg__h1">文章标题 H1</p>
+      <p class="sg__h2">小节标题 H2</p>
+      <p class="sg__h3">小节标题 H3</p>
+      <p>
+        正文 17px / 1.85。中文阅读优先，英文使用 Public Sans 回退系统字体。
+      </p>
+      <p class="sg__small">辅助信息 14px / 1.6</p>
+      <p class="sg__caption">说明文字 12px / 1.5</p>
+    </section>
+
+    <section class="sg__section" aria-labelledby="sg-space">
+      <h2 id="sg-space">间距</h2>
+      <div class="sg__spacing">
+        <span class="sg__space sg__space--1">4</span>
+        <span class="sg__space sg__space--2">8</span>
+        <span class="sg__space sg__space--3">12</span>
+        <span class="sg__space sg__space--4">16</span>
+        <span class="sg__space sg__space--5">24</span>
+        <span class="sg__space sg__space--6">32</span>
+        <span class="sg__space sg__space--7">48</span>
+        <span class="sg__space sg__space--8">64</span>
+      </div>
+    </section>
+
+    <section class="sg__section" aria-labelledby="sg-components">
+      <h2 id="sg-components">组件</h2>
+
+      <div class="sg__row">
+        <button class="sg__button sg__button--primary" type="button">
+          主按钮
+        </button>
+        <button class="sg__button" type="button">次按钮</button>
+        <span class="sg__tag">#前端</span>
+        <span class="sg__tag">#工程实践</span>
+      </div>
+
+      <div class="sg__code">
+        <span class="sg__code-lang">ts</span>
+        <pre><code>const posts = await getPublishedPosts();</code></pre>
+      </div>
+
+      <div class="sg__prose prose">
+        <h3>正文示例</h3>
+        <p>
+          这是一段正文示例，用于检查行高、段落间距与链接
+          <a href="/blog/">文章列表</a> 的样式。
+        </p>
+        <blockquote>引用块使用左侧强调线，不加大面积背景。</blockquote>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .sg {
+    max-width: var(--container);
+    margin-inline: auto;
+  }
+
+  .sg__header {
+    padding-block-end: var(--space-5);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sg__header h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    line-height: 1.1;
+  }
+
+  .sg__header p {
+    margin: var(--space-3) 0 0;
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+
+  .sg__section {
+    padding-block: var(--space-7);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sg__section h2 {
+    margin: 0 0 var(--space-5);
+    font-family: var(--font-display);
+    font-size: var(--text-h2);
+  }
+
+  .sg__swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--space-3);
+  }
+
+  .sg__swatch {
+    display: flex;
+    align-items: end;
+    min-height: 96px;
+    padding: var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+
+  .sg__swatch--bg {
+    background: var(--bg);
+    color: var(--fg);
+  }
+
+  .sg__swatch--surface {
+    background: var(--surface);
+    color: var(--fg);
+  }
+
+  .sg__swatch--muted {
+    background: var(--surface-muted);
+    color: var(--fg);
+  }
+
+  .sg__swatch--fg {
+    background: var(--fg);
+    color: var(--bg);
+  }
+
+  .sg__swatch--accent {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .sg__swatch--solid {
+    background: var(--accent-solid);
+    color: var(--on-accent);
+  }
+
+  .sg__display,
+  .sg__h1,
+  .sg__h2,
+  .sg__h3 {
+    margin: 0 0 var(--space-3);
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .sg__display {
+    font-size: var(--text-display);
+  }
+
+  .sg__h1 {
+    font-size: var(--text-h1);
+  }
+
+  .sg__h2 {
+    font-size: var(--text-h2);
+  }
+
+  .sg__h3 {
+    font-size: var(--text-h3);
+  }
+
+  .sg__small {
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+
+  .sg__caption {
+    color: var(--fg-muted);
+    font-size: var(--text-xs);
+  }
+
+  .sg__spacing {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-2);
+  }
+
+  .sg__space {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 24px;
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+
+  .sg__space::before {
+    content: "";
+    display: block;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--accent);
+  }
+
+  .sg__space--1::before {
+    width: var(--space-1);
+  }
+
+  .sg__space--2::before {
+    width: var(--space-2);
+  }
+
+  .sg__space--3::before {
+    width: var(--space-3);
+  }
+
+  .sg__space--4::before {
+    width: var(--space-4);
+  }
+
+  .sg__space--5::before {
+    width: var(--space-5);
+  }
+
+  .sg__space--6::before {
+    width: var(--space-6);
+  }
+
+  .sg__space--7::before {
+    width: var(--space-7);
+  }
+
+  .sg__space--8::before {
+    width: var(--space-8);
+  }
+
+  .sg__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-block-end: var(--space-6);
+  }
+
+  .sg__button {
+    min-height: 44px;
+    padding: 0 var(--space-5);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .sg__button--primary {
+    border-color: var(--accent-solid);
+    background: var(--accent-solid);
+    color: var(--on-accent);
+  }
+
+  .sg__tag {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0 var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--fg-muted);
+    font-size: var(--text-xs);
+  }
+
+  .sg__code {
+    position: relative;
+    margin-block-end: var(--space-6);
+    padding: var(--space-4);
+    padding-block-start: var(--space-6);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface-muted);
+    overflow-x: auto;
+  }
+
+  .sg__code-lang {
+    position: absolute;
+    inset-block-start: var(--space-2);
+    inset-inline-start: var(--space-3);
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+
+  .sg__code pre {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+
+  .sg__prose {
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+</style>

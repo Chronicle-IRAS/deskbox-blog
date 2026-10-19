@@ -1,0 +1,239 @@
+---
+import { Image } from 'astro:assets';
+import type { MarkdownHeading } from 'astro';
+import BaseLayout from './BaseLayout.astro';
+import PrevNext from '../components/PrevNext.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import { pageTitle } from '../data/site';
+import { formatDate } from '../lib/format';
+import type { BlogEntry, PostSummary } from '../lib/posts';
+import '../styles/prose.css';
+
+interface Props {
+  post: BlogEntry;
+  summary: PostSummary;
+  headings: MarkdownHeading[];
+  prev?: PostSummary;
+  next?: PostSummary;
+}
+
+const { post, summary, headings, prev, next } = Astro.props;
+const tocHeadings = headings.filter(
+  (heading) => heading.depth === 2 || heading.depth === 3,
+);
+const hasToc = tocHeadings.length >= 3;
+const cover = post.data.cover;
+const coverAlt = post.data.coverAlt ?? '';
+---
+
+<BaseLayout
+  title={pageTitle(post.data.title)}
+  description={post.data.description}
+  activeNav="blog"
+>
+  <article class="post">
+    <header class="post__header">
+      <div class="post__meta">
+        <time datetime={post.data.pubDate.toISOString()}>
+          {formatDate(post.data.pubDate)}
+        </time>
+        {post.data.updatedDate && (
+          <span>
+            更新于
+            <time datetime={post.data.updatedDate.toISOString()}>
+              {formatDate(post.data.updatedDate)}
+            </time>
+          </span>
+        )}
+        <span>约 {summary.readingMinutes} 分钟</span>
+        {summary.tags.length > 0 && (
+          <ul class="post__tags" aria-label="标签">
+            {summary.tags.map((tag) => (
+              <li class="post__tag">#{tag}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <h1>{post.data.title}</h1>
+
+      {post.data.description && (
+        <p class="post__description">{post.data.description}</p>
+      )}
+
+      {cover && (
+        <figure class="post__cover">
+          <Image
+            src={cover}
+            alt={coverAlt}
+            loading="eager"
+            fetchpriority="high"
+          />
+        </figure>
+      )}
+    </header>
+
+    {hasToc && (
+      <details class="post__toc-mobile">
+        <summary>本文目录</summary>
+        <TableOfContents headings={tocHeadings} />
+      </details>
+    )}
+
+    <div class="post__body">
+      <div class="post__content prose">
+        <slot />
+      </div>
+
+      {hasToc && (
+        <aside class="post__toc" aria-label="文章目录">
+          <TableOfContents headings={tocHeadings} />
+        </aside>
+      )}
+    </div>
+
+    <PrevNext prev={prev} next={next} />
+  </article>
+</BaseLayout>
+
+<script>
+  import '../scripts/code-copy';
+  import '../scripts/toc-highlight';
+</script>
+
+<style>
+  .post {
+    max-width: calc(var(--measure) + 220px + var(--space-7));
+    margin-inline: auto;
+  }
+
+  .post__header {
+    max-width: var(--measure);
+  }
+
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+  }
+
+  .post__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .post__tag {
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+
+  .post__header h1 {
+    margin: var(--space-4) 0 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    font-weight: 600;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+
+  .post__description {
+    margin: var(--space-4) 0 0;
+    color: var(--fg-muted);
+    font-size: var(--text-lg);
+    line-height: 1.5;
+  }
+
+  .post__cover {
+    margin: var(--space-6) 0 0;
+  }
+
+  .post__cover :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+  }
+
+  .post__body {
+    margin-block-start: var(--space-7);
+  }
+
+  .post__content {
+    min-width: 0;
+  }
+
+  .post__toc-mobile {
+    margin-block: var(--space-5);
+  }
+
+  .post__toc-mobile summary {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .post__toc-mobile summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .post__toc-mobile summary::after {
+    content: "+";
+    margin-inline-start: auto;
+    color: var(--fg-muted);
+  }
+
+  .post__toc-mobile[open] summary {
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+  }
+
+  .post__toc-mobile[open] summary::after {
+    content: "−";
+  }
+
+  .post__toc-mobile :global(.toc) {
+    padding: var(--space-4);
+    border: 1px solid var(--border);
+    border-block-start: 0;
+    border-end-start-radius: var(--radius-md);
+    border-end-end-radius: var(--radius-md);
+  }
+
+  @media (min-width: 1024px) {
+    .post__body {
+      display: grid;
+      grid-template-columns: minmax(0, var(--measure)) 220px;
+      gap: var(--space-7);
+      align-items: start;
+    }
+
+    .post__toc {
+      position: sticky;
+      top: 96px;
+    }
+
+    .post__toc-mobile {
+      display: none;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .post__toc {
+      display: none;
+    }
+  }
+</style>
