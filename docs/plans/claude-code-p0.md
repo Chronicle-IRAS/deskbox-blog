@@ -220,9 +220,10 @@ interface Props {
 }
 ```
 
-- `PostCard` 输出标题链接 `/blog/${post.slug}/`、日期、摘要、标签、阅读分钟。
+- `PostCard` 根元素固定为 `<article class="post-card">`，只输出一个标题链接 `/blog/${post.slug}/`；日期、摘要、标签、阅读分钟为文本。
+- P0 标签只显示为 `#标签` 文本，不链接到 `/tags/`（P1 再加链接）。
 - `variant="featured"` 用于首页最新文章；`default` 用于列表。
-- `PostList` 输出 `<div class="post-list">`，空数组显示 `emptyText` 或默认空状态。
+- `PostList` 输出 `<div class="post-list">`，每篇一个 `PostCard`；空数组显示 `emptyText` 或默认空状态。
 - 样式由 Claude 在组件内实现；omp 只负责外层页面布局，不改组件内部结构。
 
 ### 4.5 `src/layouts/BaseLayout.astro`

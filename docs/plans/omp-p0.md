@@ -252,6 +252,7 @@ interface Props {
 ```
 
 - `/blog/` 使用 `<PostList posts={summaries} />`，不要重写卡片。
+- `PostCard` 根元素为 `<article class="post-card">`，每篇一个标题链接；P0 标签是 `#标签` 文本，不链接 `/tags/`。
 - 首页由 Claude 使用 `PostCard variant="featured"` 与 `PostList`；omp 不编辑首页。
 - 需要调整卡片外观时，提出 `CONTRACT-CHANGE`，不要改组件内部结构。
 
