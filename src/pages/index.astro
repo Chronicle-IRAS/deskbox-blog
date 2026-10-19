@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import PostList from '../components/PostList.astro';
 import Icon from '../components/Icon.astro';
-import { pageTitle, site } from '../data/site';
+import { site } from '../data/site';
 import { getPublishedPosts, toPostSummary } from '../lib/posts';
 
 const posts = (await getPublishedPosts()).map(toPostSummary);
@@ -11,7 +11,7 @@ const [latest, ...rest] = posts;
 const recent = rest.slice(0, 6);
 ---
 
-<BaseLayout title={pageTitle()} description={site.description} activeNav="home">
+<BaseLayout title={`${site.name} · ${site.description}`} description={site.description} activeNav="home">
   <div class="container home">
     <section class="home-intro" aria-labelledby="home-title">
       <div class="intro">

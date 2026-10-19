@@ -8,19 +8,27 @@ import { getPublishedPosts, type BlogEntry } from '../lib/posts';
 
 type AstroContainerInstance = Awaited<ReturnType<typeof AstroContainer.create>>;
 
-function absolutizeHtml(html: string, base: URL): string {
-  const { origin } = base;
+function resolveUrl(value: string, base: URL): string {
+  const trimmed = value.trim();
 
+  if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed) || trimmed.startsWith('//')) {
+    return trimmed;
+  }
+
+  return new URL(trimmed, base).toString();
+}
+
+function absolutizeHtml(html: string, itemUrl: URL): string {
   return html
     .replace(
-      /\b(href|src)="\/(?!\/)/g,
-      (_match, attribute: string) => `${attribute}="${origin}/`,
+      /\b(href|src)="([^"]*)"/g,
+      (_match, attribute: string, value: string) =>
+        `${attribute}="${resolveUrl(value, itemUrl)}"`,
     )
     .replace(/\bsrcset="([^"]*)"/g, (_match, value: string) => {
       const candidates = value.split(',').map((candidate) => {
         const [url, ...descriptor] = candidate.trim().split(/\s+/);
-        const absolute = url.startsWith('/') ? `${origin}${url}` : url;
-        return [absolute, ...descriptor].join(' ');
+        return [resolveUrl(url, itemUrl), ...descriptor].join(' ');
       });
 
       return `srcset="${candidates.join(', ')}"`;
@@ -56,14 +64,18 @@ export async function GET(context: APIContext) {
   };
 
   const items = await Promise.all(
-    posts.map(async (post) => ({
-      title: post.data.title,
-      description: post.data.description,
-      pubDate: post.data.pubDate,
-      link: `/blog/${post.data.slug}/`,
-      categories: post.data.tags,
-      content: absolutizeHtml(await renderPostHtml(post, getContainer), base),
-    })),
+    posts.map(async (post) => {
+      const itemUrl = new URL(`/blog/${post.data.slug}/`, base);
+
+      return {
+        title: post.data.title,
+        description: post.data.description,
+        pubDate: post.data.pubDate,
+        link: `/blog/${post.data.slug}/`,
+        categories: post.data.tags,
+        content: absolutizeHtml(await renderPostHtml(post, getContainer), itemUrl),
+      };
+    }),
   );
 
   return rss({
@@ -71,6 +83,9 @@ export async function GET(context: APIContext) {
     description: site.description,
     site: base,
     items,
-    customData: '<language>zh-CN</language>',
+    customData: [
+      '<language>zh-CN</language>',
+      `<lastBuildDate>${new Date().toUTCString()}</lastBuildDate>`,
+    ].join(''),
   });
 }

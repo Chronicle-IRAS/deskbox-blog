@@ -8,7 +8,7 @@ function parseJsonLd(raw: string | null): Record<string, unknown> {
 test('首页输出 WebSite/Person JSON-LD 与 canonical', async ({ page }) => {
   await page.goto('/');
 
-  await expect(page).toHaveTitle('DeskBox');
+  await expect(page).toHaveTitle('DeskBox · 写代码，也写生活。');
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     'href',
     'http://localhost:4321/',
@@ -80,7 +80,13 @@ test('RSS 包含 12 篇已发布文章且排除草稿/未来', async ({ request 
   expect(body.match(/<item>/g) ?? []).toHaveLength(12);
   expect(body).not.toContain('草稿示例');
   expect(body).not.toContain('未来文章示例');
+  expect(body).toContain('<lastBuildDate>');
   expect(body).toContain('content:encoded');
+  expect(body).toContain('内容集合（Content Collections）');
+  expect(body).not.toMatch(/(?:href|src)=&quot;\//);
+  expect(body).toContain(
+    'href=&quot;http://localhost:4321/blog/astro-content-collections/#user-content-fn-1&quot;',
+  );
   expect(body).toContain(
     '<guid isPermaLink="true">http://localhost:4321/blog/astro-content-collections/</guid>',
   );
@@ -96,4 +102,29 @@ test('robots.txt 指向 sitemap', async ({ request }) => {
   expect(body).toContain('User-agent: *');
   expect(body).toContain('Disallow: /search/');
   expect(body).toContain('Sitemap: http://localhost:4321/sitemap-index.xml');
+});
+
+test('sitemap 包含已发布文章并排除非索引页', async ({ request }) => {
+  const indexResponse = await request.get('/sitemap-index.xml');
+
+  expect(indexResponse.status()).toBe(200);
+
+  const indexBody = await indexResponse.text();
+  const sitemapPath = indexBody.match(/<loc>([^<]+)<\/loc>/)?.[1];
+
+  expect(sitemapPath).toBeTruthy();
+
+  const sitemapResponse = await request.get(new URL(sitemapPath!).pathname);
+
+  expect(sitemapResponse.status()).toBe(200);
+
+  const body = await sitemapResponse.text();
+
+  expect(body).toContain('http://localhost:4321/blog/astro-content-collections/');
+  expect(body).not.toContain('/search/');
+  expect(body).not.toContain('/styleguide/');
+  expect(body).not.toContain('/404');
+  expect(body).not.toContain('/blog/page/');
+  expect(body).not.toContain('/rss.xml');
+  expect(body).not.toContain('/robots.txt');
 });
