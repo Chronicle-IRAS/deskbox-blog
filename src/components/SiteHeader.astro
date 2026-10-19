@@ -3,20 +3,35 @@ import { site, type NavItem } from '../data/site';
 import Icon from './Icon.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
+type ActiveNav = 'home' | 'blog' | 'tags' | 'archive' | 'about' | 'search';
+
 interface Props {
-  activeNav?: 'home' | 'blog' | 'about';
+  activeNav?: ActiveNav;
 }
 
 const { activeNav } = Astro.props;
 
-const activeHref =
-  activeNav === 'home'
-    ? '/'
-    : activeNav === 'blog'
-      ? '/blog/'
-      : activeNav === 'about'
-        ? '/about/'
-        : undefined;
+const navHrefs: Record<ActiveNav, string> = {
+  home: '/',
+  blog: '/blog/',
+  tags: '/tags/',
+  archive: '/archive/',
+  about: '/about/',
+  search: '/search/',
+};
+
+function inferActiveNav(pathname: string): ActiveNav | undefined {
+  if (pathname === '/') return 'home';
+  if (pathname.startsWith('/blog/')) return 'blog';
+  if (pathname.startsWith('/tags/')) return 'tags';
+  if (pathname.startsWith('/archive/')) return 'archive';
+  if (pathname.startsWith('/about/')) return 'about';
+  if (pathname.startsWith('/search/')) return 'search';
+  return undefined;
+}
+
+const currentNav = activeNav ?? inferActiveNav(Astro.url.pathname);
+const activeHref = currentNav ? navHrefs[currentNav] : undefined;
 
 const isActive = (item: NavItem) => item.href === activeHref;
 ---

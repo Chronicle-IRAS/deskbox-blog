@@ -128,3 +128,30 @@ test('sitemap 包含已发布文章并排除非索引页', async ({ request }) =
   expect(body).not.toContain('/rss.xml');
   expect(body).not.toContain('/robots.txt');
 });
+
+test('P1 路由显示导航当前项', async ({ page }) => {
+  const cases = [
+    ['/', '文章'],
+    ['/blog/', '文章'],
+    ['/blog/page/2/', '文章'],
+    ['/tags/', '标签'],
+    ['/tags/frontend/', '标签'],
+    ['/archive/', '归档'],
+    ['/search/', '搜索'],
+    ['/about/', '关于'],
+  ] as const;
+
+  for (const [path, label] of cases) {
+    await page.goto(path);
+
+    const current = page
+      .getByRole('navigation', { name: '主导航' })
+      .getByRole('link', { name: label });
+
+    if (path === '/') {
+      await expect(current).not.toHaveAttribute('aria-current', 'page');
+    } else {
+      await expect(current).toHaveAttribute('aria-current', 'page');
+    }
+  }
+});
