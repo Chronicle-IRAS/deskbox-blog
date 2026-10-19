@@ -4,6 +4,7 @@ import remarkGfm from 'remark-gfm';
 
 export default defineConfig({
   site: 'http://localhost:4321',
+  server: { host: '127.0.0.1' },
   trailingSlash: 'always',
   build: { format: 'directory' },
   integrations: [mdx()],
