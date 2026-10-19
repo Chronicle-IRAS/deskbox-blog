@@ -1,7 +1,10 @@
 interface PagefindData {
   url: string;
-  title: string;
+  title?: string;
   excerpt: string;
+  meta?: {
+    title?: string;
+  };
 }
 
 interface PagefindResult {
@@ -37,7 +40,7 @@ function initSearch(): void {
 
       const link = document.createElement('a');
       link.href = item.url;
-      link.textContent = item.title || '未命名';
+      link.textContent = item.meta?.title || item.title || '未命名';
 
       const excerpt = document.createElement('p');
       excerpt.className = 'search-excerpt';
