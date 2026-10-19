@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import PostList from '../components/PostList.astro';
 import Icon from '../components/Icon.astro';
-import { pageTitle, site } from '../data/site';
+import { site } from '../data/site';
 import { getPublishedPosts, toPostSummary } from '../lib/posts';
 
 const posts = (await getPublishedPosts()).map(toPostSummary);
@@ -11,7 +11,7 @@ const [latest, ...rest] = posts;
 const recent = rest.slice(0, 6);
 ---
 
-<BaseLayout title={pageTitle()} description={site.description} activeNav="home">
+<BaseLayout title={`${site.name} · ${site.description}`} description={site.description} activeNav="home">
   <div class="container home">
     <section class="home-intro" aria-labelledby="home-title">
       <div class="intro">
@@ -64,12 +64,19 @@ const recent = rest.slice(0, 6);
 
 <style>
   .home {
-    padding-block: var(--section);
+    padding-block-start: clamp(2.5rem, 6vw, 4.5rem);
+    padding-block-end: var(--space-4);
   }
 
   .home-intro {
     display: grid;
-    gap: var(--space-8);
+    gap: var(--space-7);
+  }
+
+  .intro {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
   }
 
   .site-name {
@@ -82,24 +89,28 @@ const recent = rest.slice(0, 6);
   }
 
   .tagline {
-    margin-top: var(--space-3);
-    color: var(--fg-muted);
+    margin-top: var(--space-4);
+    color: var(--fg);
+    font-family: var(--font-display);
     font-size: var(--text-lg);
     line-height: var(--leading-lg);
   }
 
   .bio {
-    max-width: 36ch;
-    margin-top: var(--space-4);
+    max-width: 38ch;
+    margin-top: var(--space-3);
     color: var(--fg-muted);
+    font-size: var(--text-base);
+    line-height: var(--leading-base);
   }
 
   .social-list {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-4);
+    align-items: center;
+    gap: var(--space-2) var(--space-5);
     padding: 0;
-    margin-top: var(--space-5);
+    margin-top: var(--space-6);
     list-style: none;
   }
 
@@ -108,7 +119,9 @@ const recent = rest.slice(0, 6);
     align-items: center;
     gap: var(--space-2);
     min-height: 44px;
+    padding-inline: var(--space-1);
     color: var(--fg-muted);
+    font-size: var(--text-sm);
     text-decoration: none;
     transition: color var(--duration-fast) var(--ease-out);
   }
@@ -117,10 +130,15 @@ const recent = rest.slice(0, 6);
     color: var(--fg);
   }
 
+  .latest {
+    min-width: 0;
+  }
+
   .section-label {
     margin-bottom: var(--space-3);
     color: var(--fg-muted);
-    font-size: var(--text-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     font-weight: 600;
     letter-spacing: 0.08em;
   }
@@ -134,7 +152,7 @@ const recent = rest.slice(0, 6);
   }
 
   .recent {
-    margin-top: var(--section);
+    margin-top: clamp(3rem, 6vw, 4.5rem);
   }
 
   .section-head {
@@ -143,12 +161,14 @@ const recent = rest.slice(0, 6);
     align-items: baseline;
     justify-content: space-between;
     gap: var(--space-2) var(--space-4);
-    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--border);
   }
 
   .recent-title {
     font-family: var(--font-display);
     font-size: var(--text-h3);
+    font-weight: 600;
     line-height: var(--leading-h3);
   }
 
@@ -157,6 +177,7 @@ const recent = rest.slice(0, 6);
     align-items: center;
     gap: var(--space-1);
     min-height: 44px;
+    padding-inline: var(--space-1);
     color: var(--fg-muted);
     font-size: var(--text-sm);
     text-decoration: none;
@@ -170,16 +191,23 @@ const recent = rest.slice(0, 6);
   @media (min-width: 1024px) {
     .home-intro {
       grid-template-columns: repeat(12, minmax(0, 1fr));
-      gap: var(--space-5);
-      align-items: start;
+      gap: var(--space-6);
+      align-items: stretch;
     }
 
     .intro {
       grid-column: span 7;
+      padding-right: var(--space-4);
+    }
+
+    .social-list {
+      margin-top: auto;
+      padding-top: var(--space-5);
     }
 
     .latest {
       grid-column: span 5;
+      padding-top: 0.25rem;
     }
   }
 </style>
