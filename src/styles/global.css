@@ -125,17 +125,52 @@ a:hover {
   line-height: var(--leading-xs);
   transition:
     color var(--duration-fast) var(--ease-out),
-    border-color var(--duration-fast) var(--ease-out);
+    border-color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.post__tag:has(a) {
+  padding: 0;
+}
+
+.post__tag a {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  color: inherit;
+  text-decoration: none;
 }
 
 .post__tag:hover {
   color: var(--fg);
   border-color: var(--border-strong);
+  background: var(--surface-muted);
+}
+
+@media (max-width: 639px) {
+  .post__tag a {
+    min-height: 36px;
+  }
 }
 
 .post__cover img {
   border: 1px solid var(--border);
   background: var(--surface-muted);
+}
+
+.post__toc-mobile summary {
+  background: var(--surface-muted);
+  color: var(--fg);
+  font-weight: 500;
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.post__toc-mobile summary:hover {
+  border-color: var(--border-strong);
+}
+
+.post__toc-mobile .toc {
+  background: var(--surface);
 }
 
 @media (min-width: 1024px) and (max-width: 1279px) {
@@ -166,12 +201,29 @@ a:hover {
   border-bottom: 1px solid var(--border);
 }
 
-:where(.blog-index__count, .tags-index__header p, .tag-page__header p, .archive__header p) {
+.search-page__header {
+  padding-block-end: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+:where(.blog-index__count, .tags-index__header p, .tag-page__header p, .archive__header p, .search-status) {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
 
+.blog-index .pagination {
+  margin-block-start: var(--space-5) !important;
+  padding-block-start: 0 !important;
+  border-top: 0 !important;
+}
+
+.archive__year h2 {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
 .archive__item {
+  padding-inline: var(--space-2);
   transition: background-color var(--duration-fast) var(--ease-out);
 }
 
@@ -179,12 +231,35 @@ a:hover {
   background-color: var(--surface-muted);
 }
 
+.archive__title {
+  font-weight: 500;
+}
+
+.archive__tags {
+  font-family: var(--font-mono);
+}
+
 .tag-list__item {
+  padding-inline: var(--space-2);
   transition: background-color var(--duration-fast) var(--ease-out);
 }
 
 .tag-list__item:hover {
   background-color: var(--surface-muted);
+}
+
+.tag-list__name::before {
+  content: "#";
+  margin-inline-end: 2px;
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+  font-weight: 400;
+}
+
+.tag-list__count {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  align-self: baseline;
 }
 
 .pagination__page {
@@ -193,6 +268,46 @@ a:hover {
 }
 
 .pagination__page[aria-current="page"] {
+  font-weight: 600;
+}
+
+/* Dynamic Pagefind search results (.search-result created at runtime) */
+.search-result {
+  padding-block-end: var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.search-result a {
+  display: inline-block;
+  color: var(--fg);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: var(--leading-h3);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.search-result a:hover {
+  color: var(--accent);
+}
+
+.search-result a:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.search-excerpt {
+  margin-block-start: var(--space-2);
+  color: var(--fg-muted);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+}
+
+.search-excerpt mark {
+  padding: 0.08em 0.28em;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--selection-bg) 42%, var(--surface));
+  color: var(--fg);
   font-weight: 600;
 }
 
@@ -230,10 +345,19 @@ a:hover {
 @media (forced-colors: active) {
   .post-card--featured,
   .post-tag,
+  .post__tag,
+  .pagination__arrow,
+  .pagination__page,
+  .search-form__input,
+  .search-form__submit,
   .code-copy,
   .skip-link,
   .not-found__action {
     border: 1px solid CanvasText;
+  }
+
+  .pagination__page[aria-current="page"] {
+    outline: 2px solid Highlight;
   }
 
   :focus-visible {
@@ -261,6 +385,12 @@ a:hover {
   .prose {
     max-width: 100%;
     padding: 0;
+  }
+
+  .prose a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    word-break: break-all;
   }
 }
 
