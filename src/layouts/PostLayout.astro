@@ -103,8 +103,9 @@ const coverAlt = post.data.coverAlt ?? '';
 
 <style>
   .post {
-    max-width: calc(var(--measure) + 220px + var(--space-7));
+    max-width: min(100%, calc(var(--measure) + 220px + var(--space-7) + 4rem));
     margin-inline: auto;
+    padding-inline: var(--gutter);
   }
 
   .post__header {
