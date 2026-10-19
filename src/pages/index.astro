@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { pageTitle, site } from '../data/site';
+---
+
+<BaseLayout title={pageTitle()} description={site.description} activeNav="home">
+  <section class="container foundation">
+    <h1>{site.name}</h1>
+    <p>P0 foundation 已就绪。</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .foundation {
+    padding-block: var(--section);
+  }
+</style>

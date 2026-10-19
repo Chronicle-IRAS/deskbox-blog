@@ -1,0 +1,36 @@
+---
+import type { PostSummary } from '../lib/posts';
+import PostCard from './PostCard.astro';
+
+interface Props {
+  posts: PostSummary[];
+  emptyText?: string;
+}
+
+const { posts, emptyText = '这里还没有内容。' } = Astro.props;
+---
+
+<div class="post-list">
+  {
+    posts.length === 0 ? (
+      <p class="post-list-empty">{emptyText}</p>
+    ) : (
+      posts.map((post) => <PostCard post={post} />)
+    )
+  }
+</div>
+
+<style>
+  .post-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .post-list-empty {
+    padding: var(--space-7) var(--space-5);
+    color: var(--fg-muted);
+    text-align: center;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+  }
+</style>

@@ -1,0 +1,144 @@
+---
+import type { PostSummary } from '../lib/posts';
+import { dayKey, formatDate } from '../lib/format';
+
+interface Props {
+  post: PostSummary;
+  variant?: 'default' | 'featured';
+}
+
+const { post, variant = 'default' } = Astro.props;
+const href = `/blog/${post.slug}/`;
+const datetime = dayKey(post.pubDate);
+---
+
+<article class:list={['post-card', `post-card--${variant}`]}>
+  <time class="post-date" datetime={datetime}>{formatDate(post.pubDate)}</time>
+
+  <div class="post-body">
+    <a class="post-title" href={href}>{post.title}</a>
+    <p class="post-description">{post.description}</p>
+    <div class="post-meta">
+      {
+        post.tags.length > 0 && (
+          <ul class="post-tags">
+            {post.tags.map((tag) => (
+              <li class="post-tag">{tag}</li>
+            ))}
+          </ul>
+        )
+      }
+      <span class="post-reading">约 {post.readingMinutes} 分钟</span>
+    </div>
+  </div>
+</article>
+
+<style>
+  .post-card {
+    min-width: 0;
+  }
+
+  .post-date {
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    white-space: nowrap;
+  }
+
+  .post-title {
+    display: block;
+    color: var(--fg);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    line-height: var(--leading-lg);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .post-title:hover {
+    color: var(--accent);
+  }
+
+  .post-description {
+    display: -webkit-box;
+    margin-top: var(--space-1);
+    overflow: hidden;
+    color: var(--fg-muted);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    margin-top: var(--space-3);
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .post-tag {
+    padding: 2px 10px;
+    color: var(--fg-muted);
+    font-size: var(--text-xs);
+    line-height: var(--leading-xs);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+  .post-reading {
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+
+  /* Default: list row. */
+  .post-card--default {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: var(--space-5);
+    padding: var(--space-5) var(--space-3);
+    margin-inline: calc(var(--space-3) * -1);
+    border-bottom: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .post-card--default:hover {
+    background: var(--surface-muted);
+  }
+
+  /* Featured: latest post block. */
+  .post-card--featured {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: border-color var(--duration-fast) var(--ease-out);
+  }
+
+  .post-card--featured:hover {
+    border-color: var(--border-strong);
+  }
+
+  .post-card--featured .post-title {
+    font-size: var(--text-h3);
+  }
+
+  @media (max-width: 639px) {
+    .post-card--default {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+  }
+</style>
