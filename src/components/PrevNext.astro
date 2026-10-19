@@ -47,6 +47,7 @@ const { prev, next } = Astro.props;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: var(--space-5);
+    max-width: var(--measure);
     margin-block-start: var(--space-8);
     padding-block-start: var(--space-5);
     border-top: 1px solid var(--border);
@@ -64,7 +65,9 @@ const { prev, next } = Astro.props;
     display: inline-flex;
     align-items: center;
     gap: var(--space-3);
+    min-height: 44px;
     max-width: 100%;
+    padding-block: var(--space-1);
     color: var(--fg-muted);
     text-decoration: none;
   }
@@ -86,6 +89,7 @@ const { prev, next } = Astro.props;
   .prev-next__text {
     display: flex;
     flex-direction: column;
+    gap: 2px;
     min-width: 0;
   }
 
@@ -100,6 +104,7 @@ const { prev, next } = Astro.props;
     overflow: hidden;
     color: var(--fg);
     font-size: var(--text-base);
+    font-weight: 500;
     line-height: 1.5;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -107,6 +112,9 @@ const { prev, next } = Astro.props;
   }
 
   .prev-next__empty {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     color: var(--fg-muted);
     font-size: var(--text-sm);
   }
