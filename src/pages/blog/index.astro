@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostList from '../../components/PostList.astro';
+import { pageTitle, site } from '../../data/site';
+import { getPublishedPosts, toPostSummary } from '../../lib/posts';
+
+const posts = (await getPublishedPosts()).map(toPostSummary);
+---
+
+<BaseLayout
+  title={pageTitle('文章')}
+  description={site.description}
+  activeNav="blog"
+>
+  <section class="blog-index">
+    <header class="blog-index__header">
+      <h1>文章</h1>
+      <p class="blog-index__count">{posts.length} 篇</p>
+    </header>
+
+    <PostList posts={posts} emptyText="还没有文章。" />
+  </section>
+</BaseLayout>
+
+<style>
+  .blog-index {
+    max-width: var(--container);
+    margin-inline: auto;
+  }
+
+  .blog-index__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block-end: var(--space-4);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .blog-index__header h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .blog-index__count {
+    margin: 0;
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+</style>
