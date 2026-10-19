@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BlogIndexView from '../../../components/BlogIndexView.astro';
+import { pageTitle, site } from '../../../data/site';
+import type { PostSummary } from '../../../lib/posts';
+import { getPublishedPosts, toPostSummary } from '../../../lib/posts';
+
+interface Props {
+  posts: PostSummary[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export async function getStaticPaths() {
+  const PAGE_SIZE = 10;
+  const allPosts = await getPublishedPosts();
+  const totalPages = Math.ceil(allPosts.length / PAGE_SIZE);
+
+  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, index) => {
+    const page = index + 2;
+    return {
+      params: { page: String(page) },
+      props: {
+        posts: allPosts
+          .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+          .map(toPostSummary),
+        total: allPosts.length,
+        page,
+        totalPages,
+      },
+    };
+  });
+}
+
+const { posts, total, page, totalPages } = Astro.props as Props;
+---
+
+<BaseLayout
+  title={pageTitle(`文章 · 第 ${page} 页`)}
+  description={site.description}
+  activeNav="blog"
+>
+  <BlogIndexView
+    posts={posts}
+    total={total}
+    page={page}
+    totalPages={totalPages}
+  />
+</BaseLayout>

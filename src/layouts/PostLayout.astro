@@ -5,6 +5,7 @@ import BaseLayout from './BaseLayout.astro';
 import PrevNext from '../components/PrevNext.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import { pageTitle } from '../data/site';
+import { tags } from '../data/tags';
 import { formatDate } from '../lib/format';
 import type { BlogEntry, PostSummary } from '../lib/posts';
 import '../styles/prose.css';
@@ -30,6 +31,7 @@ const coverAlt = post.data.coverAlt ?? '';
   title={pageTitle(post.data.title)}
   description={post.data.description}
   activeNav="blog"
+  image={post.data.cover?.src}
 >
   <article class="post">
     <header class="post__header">
@@ -48,9 +50,18 @@ const coverAlt = post.data.coverAlt ?? '';
         <span>约 {summary.readingMinutes} 分钟</span>
         {summary.tags.length > 0 && (
           <ul class="post__tags" aria-label="标签">
-            {summary.tags.map((tag) => (
-              <li class="post__tag">#{tag}</li>
-            ))}
+            {summary.tags.map((tag) => {
+              const slug = tags.find((item) => item.name === tag)?.slug;
+              return (
+                <li class="post__tag">
+                  {slug ? (
+                    <a href={`/tags/${slug}/`}>#{tag}</a>
+                  ) : (
+                    <span>#{tag}</span>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
@@ -81,7 +92,7 @@ const coverAlt = post.data.coverAlt ?? '';
     )}
 
     <div class="post__body">
-      <div class="post__content prose">
+      <div class="post__content prose" data-pagefind-body>
         <slot />
       </div>
 
@@ -134,6 +145,20 @@ const coverAlt = post.data.coverAlt ?? '';
   .post__tag {
     color: var(--fg-muted);
     font-size: var(--text-sm);
+  }
+
+  .post__tag a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .post__tag a:hover {
+    color: var(--accent);
+  }
+
+  .post__tag a:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
   }
 
   .post__header h1 {
