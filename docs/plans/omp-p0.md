@@ -392,12 +392,13 @@ interface Props {
 
 - [ ] `src/pages/about.astro`：`BaseLayout activeNav="about"`；标题、占位简介、社交链接；不写技能条/时间线。
 - [ ] `src/pages/404.astro`：`BaseLayout noindex`；大号 404、一句说明、返回首页/浏览文章；P0 不加搜索。
+  - 验证时访问未知路由（如 `/does-not-exist/`），不要用 `/404` 当作页面 URL。
 - [ ] `src/pages/styleguide.astro`：`BaseLayout noindex`；展示色板、字号、间距、按钮、标签、代码块、正文示例；不进入导航。
 - [ ] 三页复用 `prose.css` 与 token；不新增全局样式。
 
 **验收**
 
-- 404 在 `npm run preview` 下返回 HTTP 404。
+- 未知路由在 `npm run preview` 下返回 HTTP 404，并显示自定义 404 页面。
 - About 在 375/1440 正常排版。
 - styleguide 不出现在公开导航，且 `noindex`。
 
@@ -443,7 +444,7 @@ $env:PLAYWRIGHT_BASE_URL='http://localhost:4322'; npm run test:e2e
 
 ## 6. 完成标准
 
-- [ ] `/blog/`、`/blog/[slug]/`、`/about/`、`/404`、`/styleguide` 可访问。
+- [ ] `/blog/`、`/blog/[slug]/`、`/about/`、`/styleguide` 可访问；未知路由正确显示 404 页面。
 - [ ] P0 列表展示 12 篇；文章页 TOC/代码复制/上一篇/下一篇可用。
 - [ ] `prose.css` 符合设计系统；宽代码/表格不撑破页面。
 - [ ] omp 的 Playwright + axe 通过。
