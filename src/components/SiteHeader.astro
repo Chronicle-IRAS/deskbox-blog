@@ -1,0 +1,180 @@
+---
+import { site, type NavItem } from '../data/site';
+import Icon from './Icon.astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  activeNav?: 'home' | 'blog' | 'about';
+}
+
+const { activeNav } = Astro.props;
+
+const activeHref =
+  activeNav === 'home'
+    ? '/'
+    : activeNav === 'blog'
+      ? '/blog/'
+      : activeNav === 'about'
+        ? '/about/'
+        : undefined;
+
+const isActive = (item: NavItem) => item.href === activeHref;
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/">{site.name}</a>
+
+    <nav class="desktop-nav" aria-label="主导航">
+      {
+        site.nav.map((item) => (
+          <a class="nav-link" href={item.href} aria-current={isActive(item) ? 'page' : undefined}>
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="header-actions">
+      <details class="mobile-menu">
+        <summary aria-label="打开菜单">
+          <Icon name="menu" />
+        </summary>
+        <nav class="mobile-nav" aria-label="移动导航">
+          {
+            site.nav.map((item) => (
+              <a class="nav-link" href={item.href} aria-current={isActive(item) ? 'page' : undefined}>
+                {item.label}
+              </a>
+            ))
+          }
+        </nav>
+      </details>
+      <ThemeToggle />
+    </div>
+  </div>
+</header>
+
+<style>
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    height: 64px;
+  }
+
+  .brand {
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+
+  .brand:hover {
+    color: var(--fg);
+  }
+
+  .desktop-nav {
+    display: flex;
+    gap: var(--space-5);
+    margin-left: auto;
+  }
+
+  .nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .nav-link:hover,
+  .nav-link[aria-current='page'] {
+    color: var(--fg);
+  }
+
+  .nav-link[aria-current='page']::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 6px;
+    left: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .mobile-menu {
+    position: relative;
+    display: none;
+  }
+
+  .mobile-menu summary {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    color: var(--fg-muted);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .mobile-menu summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mobile-menu summary:hover {
+    color: var(--fg);
+    background: var(--surface-muted);
+  }
+
+  .mobile-nav {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 160px;
+    padding: var(--space-2);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-popover);
+  }
+
+  .mobile-nav .nav-link {
+    justify-content: flex-start;
+    padding-inline: var(--space-3);
+  }
+
+  .mobile-nav .nav-link[aria-current='page']::after {
+    right: var(--space-3);
+    bottom: 2px;
+    left: var(--space-3);
+  }
+
+  @media (max-width: 639px) {
+    .desktop-nav {
+      display: none;
+    }
+
+    .mobile-menu {
+      display: block;
+    }
+
+    .header-actions {
+      margin-left: auto;
+    }
+  }
+</style>

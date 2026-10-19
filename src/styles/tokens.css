@@ -1,0 +1,91 @@
+:root {
+  color-scheme: light dark;
+
+  /* Color */
+  --bg: light-dark(#fafafa, #09090b);
+  --surface: light-dark(#ffffff, #141416);
+  --surface-muted: light-dark(#f4f4f5, #1c1c1f);
+  --fg: light-dark(#09090b, #fafafa);
+  --fg-muted: light-dark(#52525b, #a1a1aa);
+  --border: light-dark(#e4e4e7, #27272a);
+  --border-strong: light-dark(#71717a, #a1a1aa);
+  --accent: light-dark(#be185d, #f9a8d4);
+  --accent-hover: light-dark(#9d174d, #fbcfe8);
+  --accent-solid: light-dark(#ec4899, #f472b6);
+  --accent-solid-hover: light-dark(#f472b6, #f9a8d4);
+  --on-accent: #18181b;
+  --focus: light-dark(#09090b, #fafafa);
+  --success: light-dark(#15803d, #4ade80);
+  --warning: light-dark(#b45309, #fbbf24);
+  --error: light-dark(#b91c1c, #f87171);
+  --selection-bg: light-dark(#ec4899, #f472b6);
+  --selection-fg: #18181b;
+
+  /* Typography */
+  --font-sans:
+    "Public Sans", system-ui, -apple-system, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Noto Sans SC", sans-serif;
+  --font-display:
+    "Libre Bodoni", "Iowan Old Style", "Palatino Linotype",
+    Palatino, Georgia, "Songti SC", "Noto Serif SC", serif;
+  --font-mono:
+    ui-monospace, "SFMono-Regular", "Cascadia Code",
+    Consolas, "Liberation Mono", monospace;
+
+  --text-display: clamp(2.75rem, 1.5rem + 5vw, 4.5rem);
+  --text-h1: clamp(2rem, 1.25rem + 3vw, 3rem);
+  --text-h2: 1.75rem;
+  --text-h3: 1.375rem;
+  --text-lg: 1.25rem;
+  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.0625rem);
+  --text-sm: 0.875rem;
+  --text-xs: 0.75rem;
+
+  --leading-display: 1;
+  --leading-h1: 1.1;
+  --leading-h2: 1.2;
+  --leading-h3: 1.35;
+  --leading-lg: 1.5;
+  --leading-base: 1.85;
+  --leading-sm: 1.6;
+  --leading-xs: 1.5;
+
+  /* Space */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  /* Layout */
+  --container: 72rem;
+  --measure: 42rem;
+  --gutter: clamp(1.5rem, 4vw, 2rem);
+  --section: clamp(4rem, 8vw, 6rem);
+
+  /* Shape */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 999px;
+  --border-width: 1px;
+  --shadow-popover: 0 12px 40px rgb(0 0 0 / 0.12);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 120ms;
+  --duration-base: 180ms;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}

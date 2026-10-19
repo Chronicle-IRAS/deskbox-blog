@@ -1,0 +1,74 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+const items = headings.filter(
+  (heading) => heading.depth === 2 || heading.depth === 3,
+);
+---
+
+{items.length >= 3 && (
+  <nav class="toc" aria-label="本文目录" data-toc>
+    <ol class="toc__list">
+      {items.map((heading) => (
+        <li class={`toc__item toc__item--h${heading.depth}`}>
+          <a class="toc__link" href={`#${heading.slug}`}>
+            {heading.text}
+          </a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}
+
+<style>
+  .toc {
+    font-size: var(--text-sm);
+    line-height: 1.6;
+  }
+
+  .toc__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-inline-start: 1px solid var(--border);
+  }
+
+  .toc__link {
+    display: block;
+    padding: 0.3rem 0 0.3rem 1rem;
+    border-inline-start: 2px solid transparent;
+    margin-inline-start: -1px;
+    color: var(--fg-muted);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .toc__item--h3 .toc__link {
+    padding-inline-start: 2rem;
+  }
+
+  .toc__link:hover {
+    color: var(--fg);
+  }
+
+  .toc__link:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .toc__link[aria-current="location"] {
+    color: var(--accent);
+    border-inline-start-color: var(--accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toc__link {
+      transition: none;
+    }
+  }
+</style>

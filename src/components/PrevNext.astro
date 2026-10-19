@@ -1,0 +1,134 @@
+---
+import Icon from './Icon.astro';
+import type { PostSummary } from '../lib/posts';
+
+interface Props {
+  prev?: PostSummary;
+  next?: PostSummary;
+}
+
+const { prev, next } = Astro.props;
+---
+
+{(prev || next) && (
+  <nav class="prev-next" aria-label="文章导航">
+    <div class="prev-next__item">
+      {prev ? (
+        <a class="prev-next__link" href={`/blog/${prev.slug}/`}>
+          <Icon name="chevron-left" size={18} />
+          <span class="prev-next__text">
+            <span class="prev-next__label">上一篇</span>
+            <span class="prev-next__title">{prev.title}</span>
+          </span>
+        </a>
+      ) : (
+        <span class="prev-next__empty">没有更早的文章</span>
+      )}
+    </div>
+
+    <div class="prev-next__item prev-next__item--next">
+      {next ? (
+        <a class="prev-next__link" href={`/blog/${next.slug}/`}>
+          <span class="prev-next__text">
+            <span class="prev-next__label">下一篇</span>
+            <span class="prev-next__title">{next.title}</span>
+          </span>
+          <Icon name="chevron-right" size={18} />
+        </a>
+      ) : (
+        <span class="prev-next__empty">没有更新的文章</span>
+      )}
+    </div>
+  </nav>
+)}
+
+<style>
+  .prev-next {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-5);
+    margin-block-start: var(--space-8);
+    padding-block-start: var(--space-5);
+    border-top: 1px solid var(--border);
+  }
+
+  .prev-next__item {
+    min-width: 0;
+  }
+
+  .prev-next__item--next {
+    text-align: end;
+  }
+
+  .prev-next__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    max-width: 100%;
+    color: var(--fg-muted);
+    text-decoration: none;
+  }
+
+  .prev-next__item--next .prev-next__link {
+    justify-content: flex-end;
+  }
+
+  .prev-next__link:hover .prev-next__title {
+    color: var(--accent);
+  }
+
+  .prev-next__link:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+
+  .prev-next__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .prev-next__label {
+    color: var(--fg-muted);
+    font-size: var(--text-xs);
+    line-height: 1.4;
+  }
+
+  .prev-next__title {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--fg);
+    font-size: var(--text-base);
+    line-height: 1.5;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .prev-next__empty {
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+
+  @media (max-width: 639px) {
+    .prev-next {
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+
+    .prev-next__item--next {
+      text-align: start;
+    }
+
+    .prev-next__item--next .prev-next__link {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .prev-next__title {
+      transition: none;
+    }
+  }
+</style>

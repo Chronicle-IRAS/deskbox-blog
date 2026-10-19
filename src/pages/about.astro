@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { pageTitle, site } from '../data/site';
+import '../styles/prose.css';
+---
+
+<BaseLayout
+  title={pageTitle('关于')}
+  description={`关于 ${site.name}`}
+  activeNav="about"
+>
+  <article class="about prose">
+    <h1>关于</h1>
+
+    <p>{site.author.bio}</p>
+
+    <p>
+      这里记录技术、阅读与生活。原型阶段使用示例内容，正式文章会陆续替换。
+    </p>
+
+    <h2>联系</h2>
+
+    <ul class="about__links">
+      {site.social.map((link) => (
+        <li>
+          <a href={link.href}>
+            <Icon name={link.icon} size={18} />
+            <span>{link.label}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </article>
+</BaseLayout>
+
+<style>
+  .about {
+    margin-inline: auto;
+  }
+
+  .about__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .about__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+  }
+</style>

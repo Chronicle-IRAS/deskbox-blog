@@ -1,0 +1,185 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import PostList from '../components/PostList.astro';
+import Icon from '../components/Icon.astro';
+import { pageTitle, site } from '../data/site';
+import { getPublishedPosts, toPostSummary } from '../lib/posts';
+
+const posts = (await getPublishedPosts()).map(toPostSummary);
+const [latest, ...rest] = posts;
+const recent = rest.slice(0, 6);
+---
+
+<BaseLayout title={pageTitle()} description={site.description} activeNav="home">
+  <div class="container home">
+    <section class="home-intro" aria-labelledby="home-title">
+      <div class="intro">
+        <h1 id="home-title" class="site-name">{site.name}</h1>
+        <p class="tagline">{site.description}</p>
+        <p class="bio">{site.author.bio}</p>
+
+        <ul class="social-list">
+          {
+            site.social.map((link) => (
+              <li>
+                <a class="social-link" href={link.href}>
+                  <Icon name={link.icon} size={16} />
+                  <span>{link.label}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <section class="latest" aria-labelledby="latest-title">
+        <h2 id="latest-title" class="section-label">最新文章</h2>
+        {
+          latest ? (
+            <PostCard post={latest} variant="featured" />
+          ) : (
+            <p class="empty">第一篇文章正在路上。</p>
+          )
+        }
+      </section>
+    </section>
+
+    {
+      posts.length > 0 && (
+        <section class="recent" aria-labelledby="recent-title">
+          <div class="section-head">
+            <h2 id="recent-title" class="recent-title">最近文章</h2>
+            <a class="view-all" href="/blog/">
+              查看全部
+              <Icon name="arrow-up-right" size={14} />
+            </a>
+          </div>
+          <PostList posts={recent} emptyText="这里还没有更多文章。" />
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .home {
+    padding-block: var(--section);
+  }
+
+  .home-intro {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .site-name {
+    font-family: var(--font-display);
+    font-size: var(--text-display);
+    font-weight: 600;
+    line-height: var(--leading-display);
+    letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
+  }
+
+  .tagline {
+    margin-top: var(--space-3);
+    color: var(--fg-muted);
+    font-size: var(--text-lg);
+    line-height: var(--leading-lg);
+  }
+
+  .bio {
+    max-width: 36ch;
+    margin-top: var(--space-4);
+    color: var(--fg-muted);
+  }
+
+  .social-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    padding: 0;
+    margin-top: var(--space-5);
+    list-style: none;
+  }
+
+  .social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    color: var(--fg-muted);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .social-link:hover {
+    color: var(--fg);
+  }
+
+  .section-label {
+    margin-bottom: var(--space-3);
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+
+  .empty {
+    padding: var(--space-7) var(--space-5);
+    color: var(--fg-muted);
+    text-align: center;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  .recent {
+    margin-top: var(--section);
+  }
+
+  .section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+    margin-bottom: var(--space-3);
+  }
+
+  .recent-title {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+  }
+
+  .view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-height: 44px;
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .view-all:hover {
+    color: var(--accent);
+  }
+
+  @media (min-width: 1024px) {
+    .home-intro {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: var(--space-5);
+      align-items: start;
+    }
+
+    .intro {
+      grid-column: span 7;
+    }
+
+    .latest {
+      grid-column: span 5;
+    }
+  }
+</style>
