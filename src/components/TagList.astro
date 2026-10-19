@@ -1,0 +1,75 @@
+---
+interface Item {
+  name: string;
+  slug: string;
+  description?: string;
+  count: number;
+}
+
+interface Props {
+  items: Item[];
+}
+
+const { items } = Astro.props;
+---
+
+<ul class="tag-list">
+  {items.map((item) => (
+    <li class="tag-list__item">
+      <a class="tag-list__name" href={`/tags/${item.slug}/`}>
+        {item.name}
+      </a>
+      <span class="tag-list__count">{item.count} 篇</span>
+      {item.description && (
+        <p class="tag-list__description">{item.description}</p>
+      )}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .tag-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .tag-list__item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-1) var(--space-4);
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tag-list__name {
+    color: var(--fg);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .tag-list__name:hover {
+    color: var(--accent);
+  }
+
+  .tag-list__name:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .tag-list__count {
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tag-list__description {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+  }
+</style>

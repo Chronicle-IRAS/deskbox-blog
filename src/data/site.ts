@@ -33,7 +33,10 @@ export const site = {
   },
   nav: [
     { label: '文章', href: '/blog/' },
+    { label: '标签', href: '/tags/' },
+    { label: '归档', href: '/archive/' },
     { label: '关于', href: '/about/' },
+    { label: '搜索', href: '/search/' },
   ] satisfies NavItem[],
   social: [
     { label: 'GitHub', href: 'https://github.com/', icon: 'github' },

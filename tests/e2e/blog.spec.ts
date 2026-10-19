@@ -1,14 +1,14 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('blog index', () => {
-  test('renders all published posts', async ({ page }) => {
+  test('renders the first page of posts', async ({ page }) => {
     const response = await page.goto('/blog/');
 
     expect(response?.status()).toBe(200);
     await expect(
       page.getByRole('heading', { level: 1, name: '文章' }),
     ).toBeVisible();
-    await expect(page.locator('.post-list article.post-card')).toHaveCount(12);
+    await expect(page.locator('.post-list article.post-card')).toHaveCount(10);
     await expect(
       page.locator(
         'a[href*="draft-example"], a[href*="future-example"]',

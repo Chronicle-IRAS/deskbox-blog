@@ -1,0 +1,122 @@
+---
+interface Props {
+  page: number;
+  totalPages: number;
+}
+
+const { page, totalPages } = Astro.props;
+
+const hrefFor = (target: number) =>
+  target === 1 ? '/blog/' : `/blog/page/${target}/`;
+
+const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
+---
+
+{totalPages > 1 && (
+  <nav class="pagination" aria-label="分页">
+    {page > 1 ? (
+      <a class="pagination__arrow" href={hrefFor(page - 1)} rel="prev">
+        上一页
+      </a>
+    ) : (
+      <span class="pagination__arrow" aria-disabled="true">上一页</span>
+    )}
+
+    <ol class="pagination__pages">
+      {pages.map((target) => (
+        <li>
+          {target === page ? (
+            <span class="pagination__page" aria-current="page">{target}</span>
+          ) : (
+            <a class="pagination__page" href={hrefFor(target)}>{target}</a>
+          )}
+        </li>
+      ))}
+    </ol>
+
+    {page < totalPages ? (
+      <a class="pagination__arrow" href={hrefFor(page + 1)} rel="next">
+        下一页
+      </a>
+    ) : (
+      <span class="pagination__arrow" aria-disabled="true">下一页</span>
+    )}
+  </nav>
+)}
+
+<style>
+  .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-block-start: var(--space-7);
+    padding-block-start: var(--space-5);
+    border-top: 1px solid var(--border);
+  }
+
+  .pagination__pages {
+    display: flex;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pagination__arrow,
+  .pagination__page {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .pagination__arrow:hover,
+  .pagination__page:hover {
+    color: var(--fg);
+    border-color: var(--border-strong);
+    background: var(--surface-muted);
+  }
+
+  .pagination__page[aria-current="page"] {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--surface);
+  }
+
+  .pagination__arrow[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .pagination__arrow:focus-visible,
+  .pagination__page:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 639px) {
+    .pagination {
+      justify-content: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pagination__arrow,
+    .pagination__page {
+      transition: none;
+    }
+  }
+</style>

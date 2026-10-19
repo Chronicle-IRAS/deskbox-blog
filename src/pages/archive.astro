@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { pageTitle } from '../data/site';
+import { tags } from '../data/tags';
+import { dayKey, formatDate } from '../lib/format';
+import { getPublishedPosts, getPostSlug } from '../lib/posts';
+
+const posts = await getPublishedPosts();
+const groups = new Map<string, typeof posts>();
+
+for (const post of posts) {
+  const year = dayKey(post.data.pubDate).slice(0, 4);
+  const group = groups.get(year);
+  if (group) group.push(post);
+  else groups.set(year, [post]);
+}
+
+const years = [...groups.entries()].sort(([a], [b]) => b.localeCompare(a));
+
+const tagSlug = (name: string) =>
+  tags.find((tag) => tag.name === name)?.slug;
+---
+
+<BaseLayout
+  title={pageTitle('归档')}
+  description="按年份浏览 DeskBox 的文章。"
+>
+  <section class="archive">
+    <header class="archive__header">
+      <h1>归档</h1>
+      <p>{posts.length} 篇</p>
+    </header>
+
+    {years.map(([year, items]) => (
+      <section class="archive__year" aria-labelledby={`year-${year}`}>
+        <h2 id={`year-${year}`}>{year}</h2>
+        <ul class="archive__list">
+          {items.map((post) => (
+            <li class="archive__item">
+              <time datetime={dayKey(post.data.pubDate)}>
+                {formatDate(post.data.pubDate)}
+              </time>
+              <a class="archive__title" href={`/blog/${getPostSlug(post)}/`}>
+                {post.data.title}
+              </a>
+              <span class="archive__tags">
+                {post.data.tags.map((tag) => {
+                  const slug = tagSlug(tag);
+                  return slug ? (
+                    <a href={`/tags/${slug}/`}>#{tag}</a>
+                  ) : (
+                    <span>#{tag}</span>
+                  );
+                })}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </section>
+</BaseLayout>
+
+<style>
+  .archive {
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .archive__header {
+    padding-block-end: var(--space-4);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .archive__header h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .archive__header p {
+    margin: var(--space-2) 0 0;
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+
+  .archive__year {
+    margin-block-start: var(--space-7);
+  }
+
+  .archive__year h2 {
+    margin: 0 0 var(--space-3);
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+
+  .archive__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .archive__item {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr) auto;
+    gap: var(--space-4);
+    align-items: baseline;
+    padding-block: var(--space-3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .archive__item time {
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    white-space: nowrap;
+  }
+
+  .archive__title {
+    color: var(--fg);
+    text-decoration: none;
+  }
+
+  .archive__title:hover {
+    color: var(--accent);
+  }
+
+  .archive__title:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .archive__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    color: var(--fg-muted);
+    font-size: var(--text-xs);
+  }
+
+  .archive__tags a {
+    color: var(--fg-muted);
+    text-decoration: none;
+  }
+
+  .archive__tags a:hover {
+    color: var(--accent);
+  }
+
+  @media (max-width: 639px) {
+    .archive__item {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+  }
+</style>
