@@ -5,7 +5,7 @@
 **建议分支：** `feat/agy-frontend`  
 **建议工作区：** `../博客-agy`（独立 worktree）  
 **目标：** 在**不改变路由、内容模型、组件契约**的前提下，完成前端视觉、排版、响应式、暗色模式与可访问性的设计打磨，并提交可运行代码。  
-**必读：** [视觉与交互设计](../design.md) · [设计系统](../../design-system/deskbox-blog/MASTER.md) · [原型架构](../architecture.md) · [P0 集成报告](./p0-integration-report.md) · [P1 并行实施](./p1-parallel.md)
+**必读：** [视觉与交互设计](../design.md) · [设计系统](../../design-system/deskbox-blog/MASTER.md) · [原型架构](../architecture.md) · [P0 集成报告](./p0-integration-report.md) · [P1 并行实施](./p1-parallel.md) · [三智能体分工](./three-agent-division.md)
 
 > 本文件是 agy 的任务书；`docs/design.md` 是设计意图来源，`src/styles/tokens.css` 是实现来源。两者冲突时，以本文的验收标准与 `tokens.css` 为准，并在报告中记录偏差。
 

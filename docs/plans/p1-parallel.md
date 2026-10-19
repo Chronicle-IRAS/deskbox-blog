@@ -1,6 +1,7 @@
 # P1 并行实施：Claude Code + omp
 
-**基线：** `main` @ P0 合并后（P0 已通过 `check / test / build / E2E`）  
+**基线：** `main` @ `f3b5bc5`（P0 完成；omp P1 已合并）  
+**状态：** omp 的分页/标签/归档/搜索已完成并合并；Claude 的 SEO/RSS/sitemap/Pagefind 构建仍待完成；agy 未开始。下一步分工见 [三智能体分工](./three-agent-division.md)。  
 **目标：** 在 P0 原型上补齐阅读与分发能力：分页、标签、归档、搜索、RSS、sitemap、robots、SEO。  
 **分工：** Claude Code 负责 SEO / Feed / 构建集成；omp 负责阅读路由与搜索页；agy 负责前端视觉设计与 P1 组件视觉规格。  
 **相关文档：** [agy 前端设计任务书](./agy-frontend-design.md) · [原型架构](../architecture.md) · [视觉设计](../design.md) · [设计系统](../../design-system/deskbox-blog/MASTER.md)
