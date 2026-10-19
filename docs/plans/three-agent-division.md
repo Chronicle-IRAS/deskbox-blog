@@ -155,6 +155,27 @@
 
 > P2 是建议范围；开始前由用户确认，避免范围膨胀。
 
+### 5.1 P2 启动状态（2026-10-19）
+
+agy 仍在 `feat/agy-frontend` 工作，当前修改：
+
+```text
+src/pages/styleguide.astro
+src/styles/global.css
+```
+
+因此：
+
+- **Claude Code 可以立即开始 P2**：质量门禁、SEO 回归、性能基线、链接检查，不与 agy 的视觉文件重叠。
+- **omp 可以先开始不冲突的 P2 任务**：
+  - `PostLayout.astro` 系列导航（agy 当前未改此文件）。
+  - `search.ts` 搜索快捷键与结果增强（agy 当前未改脚本）。
+- **omp 暂缓**：
+  - 打印样式涉及 `prose.css` / `global.css`，等 agy 合并后再做。
+  - 任何 `styleguide.astro` 修改等 agy 完成。
+- **分支**：Claude `feat/p2-claude-quality`，omp `feat/p2-omp-reading`，agy 继续 `feat/agy-frontend`。
+- **集成顺序**：agy 先合并 → omp rebase → Claude 创建 `feat/p2-integration` 跑全量 → 用户确认后合并 `main`。
+
 ---
 
 ## 6. 共享契约
