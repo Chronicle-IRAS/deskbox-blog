@@ -1,0 +1,89 @@
+---
+import { site } from '../data/site';
+import { buildArticleJsonLd, buildWebsiteJsonLd, toAbsoluteUrl } from '../lib/seo';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  keywords?: string[];
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  image,
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  keywords,
+  noindex = false,
+} = Astro.props;
+
+const base = Astro.site ?? new URL(site.url);
+const canonicalHref = canonical ?? toAbsoluteUrl(Astro.url.pathname, base);
+const imageHref = image ? toAbsoluteUrl(image, base) : undefined;
+const isHome = Astro.url.pathname === '/';
+
+const jsonLd =
+  type === 'article'
+    ? buildArticleJsonLd({
+        title,
+        description,
+        url: canonicalHref,
+        image: imageHref,
+        datePublished: publishedTime,
+        dateModified: modifiedTime,
+        keywords,
+      })
+    : isHome
+      ? buildWebsiteJsonLd(base)
+      : undefined;
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalHref} />
+<meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={`${site.name} RSS`}
+  href={toAbsoluteUrl('/rss.xml', base)}
+/>
+<meta property="og:type" content={type} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalHref} />
+<meta property="og:locale" content="zh_CN" />
+<meta property="og:site_name" content={site.name} />
+{imageHref && <meta property="og:image" content={imageHref} />}
+{
+  type === 'article' && publishedTime && (
+    <meta property="article:published_time" content={publishedTime} />
+  )
+}
+{
+  type === 'article' && modifiedTime && (
+    <meta property="article:modified_time" content={modifiedTime} />
+  )
+}
+<meta name="twitter:card" content={imageHref ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{imageHref && <meta name="twitter:image" content={imageHref} />}
+{
+  jsonLd && (
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(jsonLd)}
+    />
+  )
+}
