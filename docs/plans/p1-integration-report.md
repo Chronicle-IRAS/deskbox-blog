@@ -3,7 +3,8 @@
 **执行者：** Claude Code  
 **日期：** 2026-10-19  
 **基线：** `main` @ `568511b`（P0 + omp P1 已合并）  
-**分支：** `feat/p1-integration`（未合并到 `main`）  
+**分支：** `feat/p1-integration`  
+**合并：** `main` @ `5b56973`（`merge: 合并 P1 集成到 main`）  
 **集成对象：** `feat/p1-claude-seo`、`feat/p1-omp-reading`、`feat/agy-frontend`
 
 ---
@@ -68,7 +69,7 @@
 ## 5. 未做 / 后续
 
 - 部署、域名、CI/CD、评论、分析、多语言、OG 图生成。
-- 未合并 `feat/p1-integration` 到 `main`，等待用户确认。
+- `feat/p1-integration` 已合并到 `main` @ `5b56973`。
 - omp 的 `PostLayout` 标签查找可后续统一为 `tagSlugByName()`。
 - P2 范围见 `docs/plans/three-agent-division.md` §5，需用户确认后开始。
 
@@ -83,4 +84,4 @@ npm run build    # 26 pages + Pagefind
 npm run test:e2e # 36/36（build + preview @ 127.0.0.1:4399）
 ```
 
-集成分支通过上述检查，由用户决定是否合并到 `main`。
+集成分支通过上述检查，并已合并到 `main` @ `5b56973`。P1 完成。

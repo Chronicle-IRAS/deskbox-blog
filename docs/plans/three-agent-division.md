@@ -11,15 +11,16 @@
 | 轨道 | 状态 | 分支 | 说明 |
 |---|---|---|---|
 | P0 | 完成 | `feat/p0-integration`（已合并） | 首页、列表、文章、About、404、styleguide |
-| Claude P1 | **待完成** | 未创建 | SEO、RSS、sitemap、robots、Pagefind 构建、标签映射、导航激活态、集成 |
-| omp P1 | 完成并合并 | `feat/p1-omp-reading` → `main` | 分页、标签、归档、搜索页；29/29 E2E（preview + Pagefind） |
-| agy | 未开始 | 未创建 | 前端视觉、P1 组件视觉规格、design QA |
+| Claude P1 | 完成并合并 | `feat/p1-claude-seo` → `feat/p1-integration` | SEO、RSS、sitemap、robots、Pagefind 构建、标签映射、导航激活态 |
+| omp P1 | 完成并合并 | `feat/p1-omp-reading` → `main` | 分页、标签、归档、搜索页 |
+| agy P1 | 完成并合并 | `feat/agy-frontend` → `feat/p1-integration` | P0/P1 视觉调整、token、styleguide |
 
-**当前 `main` 能力**
+**当前 `main` 能力（`main` @ `5b56973`）**
 
-- 已有：分页、标签页、归档、搜索页、文章标签链接、`data-pagefind-body`。
-- 缺少：Pagefind 依赖与 `build` 集成、SEO 组件、RSS、sitemap、robots、`PostCard` 标签链接、导航当前项激活、P1 集成报告。
-- 因此搜索页在 `main` 的 `npm run build` 下没有索引；搜索 E2E 会跳过，需 Claude P1 完成后才能全绿。
+- 分页、标签页、归档、搜索页、文章标签链接、`data-pagefind-body`。
+- SEO 组件、JSON-LD、RSS、sitemap、robots、Pagefind build 集成。
+- `npm run check` 0 errors；`npm run test` 29/29；`npm run build` 26 页 + Pagefind；`npm run test:e2e` 36/36。
+- 搜索在 preview + Pagefind 下可用；dev 下显示“索引未生成”。
 
 ---
 
