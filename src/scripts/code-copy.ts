@@ -32,6 +32,9 @@ function initCodeCopy(): void {
     if (pre.dataset.copyReady === 'true') return;
     pre.dataset.copyReady = 'true';
     pre.tabIndex = 0;
+    if (!pre.hasAttribute('aria-label')) {
+      pre.setAttribute('aria-label', '代码块');
+    }
 
     const parent = pre.parentNode;
     if (!parent) return;
@@ -69,17 +72,30 @@ function initCodeCopy(): void {
       try {
         await copyText(code);
         button.textContent = '已复制';
+        button.dataset.state = 'copied';
         status.textContent = '已复制';
       } catch {
         button.textContent = '复制失败';
+        button.dataset.state = 'error';
         status.textContent = '复制失败';
       }
 
       window.setTimeout(() => {
         button.textContent = '复制';
+        delete button.dataset.state;
         status.textContent = '';
       }, 2000);
     });
+  });
+
+  const tables = document.querySelectorAll<HTMLTableElement>('.prose table');
+  tables.forEach((table) => {
+    if (!table.hasAttribute('tabindex')) {
+      table.tabIndex = 0;
+    }
+    if (!table.hasAttribute('aria-label')) {
+      table.setAttribute('aria-label', '数据表格');
+    }
   });
 }
 

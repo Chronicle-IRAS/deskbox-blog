@@ -28,7 +28,7 @@
     "Noto Sans SC", sans-serif;
   --font-display:
     "Libre Bodoni", "Iowan Old Style", "Palatino Linotype",
-    Palatino, Georgia, "Songti SC", "Noto Serif SC", serif;
+    Palatino, Georgia, "Songti SC", "Noto Serif SC", "SimSun", serif;
   --font-mono:
     ui-monospace, "SFMono-Regular", "Cascadia Code",
     Consolas, "Liberation Mono", monospace;
@@ -82,10 +82,25 @@
   --duration-base: 180ms;
 }
 
+@media (min-width: 640px) {
+  :root {
+    --text-base: 1.0625rem;
+    --gutter: 2rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --shadow-popover: 0 12px 40px rgb(0 0 0 / 0.5);
+  }
+}
+
 :root[data-theme="light"] {
   color-scheme: light;
+  --shadow-popover: 0 12px 40px rgb(0 0 0 / 0.12);
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
+  --shadow-popover: 0 12px 40px rgb(0 0 0 / 0.5);
 }
