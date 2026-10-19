@@ -3,7 +3,12 @@ import { expect, test } from '@playwright/test';
 
 const paths = [
   '/blog/',
+  '/blog/page/2/',
   '/blog/astro-content-collections/',
+  '/tags/',
+  '/tags/frontend/',
+  '/archive/',
+  '/search/',
   '/about/',
   '/does-not-exist/',
 ];
@@ -13,6 +18,7 @@ for (const path of paths) {
     page,
   }) => {
     await page.goto(path);
+    await page.waitForLoadState('networkidle');
 
     const results = await new AxeBuilder({ page }).analyze();
     const blocking = results.violations.filter(

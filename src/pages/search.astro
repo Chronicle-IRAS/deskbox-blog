@@ -1,0 +1,186 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { pageTitle } from '../data/site';
+---
+
+<BaseLayout
+  title={pageTitle('搜索')}
+  description="搜索 DeskBox 的文章。"
+  noindex
+>
+  <section class="search-page">
+    <header class="search-page__header">
+      <h1>搜索</h1>
+      <p>输入关键词，搜索标题与正文。</p>
+    </header>
+
+    <form class="search-form" role="search" action="/search/" method="get">
+      <label class="search-form__label" for="search-input">搜索文章</label>
+      <div class="search-form__row">
+        <input
+          id="search-input"
+          class="search-form__input"
+          name="q"
+          type="search"
+          autocomplete="off"
+          placeholder="例如：内容集合、排版"
+          aria-describedby="search-status"
+        />
+        <button class="search-form__submit" type="submit">搜索</button>
+      </div>
+    </form>
+
+    <p id="search-status" class="search-status" aria-live="polite">
+      输入关键词开始搜索。
+    </p>
+
+    <ol id="search-results" class="search-results"></ol>
+
+    <noscript>
+      <p class="search-error">
+        搜索需要 JavaScript。你可以直接浏览
+        <a href="/archive/">归档</a>。
+      </p>
+    </noscript>
+  </section>
+</BaseLayout>
+
+<script>
+  import '../scripts/search';
+</script>
+
+<style>
+  .search-page {
+    max-width: var(--measure);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .search-page__header h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .search-page__header p {
+    margin: var(--space-3) 0 0;
+    color: var(--fg-muted);
+  }
+
+  .search-form {
+    margin-block-start: var(--space-6);
+  }
+
+  .search-form__label {
+    display: block;
+    margin-block-end: var(--space-2);
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+
+  .search-form__row {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .search-form__input {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 var(--space-4);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--fg);
+    font-size: var(--text-base);
+  }
+
+  .search-form__input:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .search-form__submit {
+    min-height: 44px;
+    padding: 0 var(--space-5);
+    border: 1px solid var(--accent-solid);
+    border-radius: var(--radius-md);
+    background: var(--accent-solid);
+    color: var(--on-accent);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .search-form__submit:hover {
+    border-color: var(--accent-solid-hover);
+    background: var(--accent-solid-hover);
+  }
+
+  .search-form__submit:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .search-status {
+    margin-block-start: var(--space-5);
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+
+  .search-status[data-state="error"] {
+    color: var(--error);
+  }
+
+  .search-results {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    margin: var(--space-5) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .search-result {
+    padding-block-end: var(--space-5);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .search-result a {
+    color: var(--fg);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .search-result a:hover {
+    color: var(--accent);
+  }
+
+  .search-result a:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .search-excerpt {
+    margin: var(--space-2) 0 0;
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+    line-height: 1.7;
+  }
+
+  .search-excerpt :global(mark) {
+    background: var(--selection-bg);
+    color: var(--selection-fg);
+  }
+
+  .search-error {
+    padding: var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+</style>
