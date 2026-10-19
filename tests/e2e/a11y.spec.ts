@@ -5,7 +5,7 @@ const paths = [
   '/blog/',
   '/blog/astro-content-collections/',
   '/about/',
-  '/404',
+  '/does-not-exist/',
 ];
 
 for (const path of paths) {
