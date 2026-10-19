@@ -13,8 +13,8 @@ test.describe('article page', () => {
 
     expect(response?.status()).toBe(200);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    await expect(page.locator('[data-toc]').first()).toBeVisible();
-    await expect(page.locator('[data-toc] a').first()).toBeVisible();
+    await expect(page.locator('.post__toc [data-toc]')).toBeVisible();
+    await expect(page.locator('.post__toc [data-toc] a').first()).toBeVisible();
     await expect(page.locator('.prose pre').first()).toBeVisible();
     await expect(
       page.getByRole('navigation', { name: '文章导航' }),
