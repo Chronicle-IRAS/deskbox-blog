@@ -39,9 +39,14 @@
 | 前端设计 | agy | `feat/agy-frontend` | `../博客-agy` | 4323 |
 
 ```bash
-# omp
-git worktree add ../博客-omp -b feat/p1-omp-reading main
-# agy
+# Claude（主工作区）
+git switch main
+git switch -c feat/p1-claude-seo
+
+# omp（复用已有 worktree，从 main 建新分支）
+git -C ../博客-omp switch -c feat/p1-omp-reading main
+
+# agy（新 worktree）
 git worktree add ../博客-agy -b feat/agy-frontend main
 ```
 
