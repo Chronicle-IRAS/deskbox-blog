@@ -10,6 +10,7 @@
     "dev": "astro dev",
     "check": "astro check && tsc --noEmit",
     "test": "vitest run",
+    "measure": "node scripts/measure-size.mjs",
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
     "test:e2e": "playwright test"
