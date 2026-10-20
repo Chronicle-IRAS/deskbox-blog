@@ -13,8 +13,9 @@
     "measure": "node scripts/measure-size.mjs",
     "csp": "node scripts/csp-hashes.mjs",
     "check:csp": "node scripts/csp-hashes.mjs --check",
+    "headers": "node scripts/build-headers.mjs",
     "clean": "node scripts/clean.mjs",
-    "build": "npm run clean && astro build && pagefind --site dist",
+    "build": "npm run clean && astro build && pagefind --site dist && npm run csp && npm run headers",
     "preview": "astro preview",
     "test:e2e": "playwright test"
   },
