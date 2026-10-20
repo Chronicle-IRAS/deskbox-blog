@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="DeskBox Avatar">
+  <rect width="512" height="512" rx="64" fill="#09090B"/>
+  <rect x="24" y="24" width="464" height="464" rx="44" fill="none" stroke="#27272A" stroke-width="2"/>
+  <line x1="24" y1="112" x2="488" y2="112" stroke="#27272A" stroke-width="2"/>
+  <line x1="24" y1="400" x2="488" y2="400" stroke="#27272A" stroke-width="2"/>
+  <rect x="64" y="60" width="96" height="8" rx="4" fill="#EC4899"/>
+  <text x="64" y="328" fill="#FAFAFA" font-family="Georgia, 'Libre Bodoni', 'Songti SC', 'SimSun', serif" font-size="240" font-weight="700" letter-spacing="-8">D</text>
+  <circle cx="348" cy="306" r="18" fill="#EC4899"/>
+  <text x="64" y="452" fill="#A1A1AA" font-family="'JetBrains Mono', Consolas, monospace" font-size="24" letter-spacing="4">DESKBOX · EDITORIAL</text>
+</svg>

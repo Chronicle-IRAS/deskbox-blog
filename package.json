@@ -11,7 +11,11 @@
     "check": "astro check && tsc --noEmit",
     "test": "vitest run",
     "measure": "node scripts/measure-size.mjs",
-    "build": "astro build && pagefind --site dist",
+    "csp": "node scripts/csp-hashes.mjs",
+    "check:csp": "node scripts/csp-hashes.mjs --check",
+    "headers": "node scripts/build-headers.mjs",
+    "clean": "node scripts/clean.mjs",
+    "build": "npm run clean && astro build && pagefind --site dist && npm run csp && npm run headers",
     "preview": "astro preview",
     "test:e2e": "playwright test"
   },

@@ -22,6 +22,21 @@ export interface SocialLink {
   icon: IconName;
 }
 
+export interface GiscusConfig {
+  provider: 'giscus';
+  repo: `${string}/${string}`;
+  repoId: string;
+  category: string;
+  categoryId: string;
+  mapping?: 'pathname' | 'url' | 'title' | 'og:title' | 'specific' | 'number';
+  term?: string;
+  reactionsEnabled?: '1' | '0';
+  inputPosition?: 'top' | 'bottom';
+  lang?: string;
+}
+
+export type CommentsConfig = { provider: 'none' } | GiscusConfig;
+
 export const site = {
   name: 'DeskBox',
   title: 'DeskBox',
@@ -43,6 +58,7 @@ export const site = {
     { label: 'Email', href: 'mailto:hello@example.com', icon: 'mail' },
   ] satisfies SocialLink[],
   footer: '© 2026 DeskBox',
+  comments: { provider: 'none' } as CommentsConfig,
 };
 
 export function pageTitle(title?: string): string {

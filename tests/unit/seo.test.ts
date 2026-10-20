@@ -16,6 +16,7 @@ describe('buildWebsiteJsonLd', () => {
     expect(graph.map((node) => node['@type'])).toEqual(['WebSite', 'Person']);
     expect(graph[0].url).toBe(`${BASE}/`);
     expect(graph[1].url).toBe(`${BASE}/about/`);
+    expect(graph[1].image).toBe(`${BASE}/avatar.svg`);
   });
 });
 

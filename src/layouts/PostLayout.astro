@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import type { MarkdownHeading } from 'astro';
 import BaseLayout from './BaseLayout.astro';
+import Comments from '../components/Comments.astro';
 import PrevNext from '../components/PrevNext.astro';
 import SeriesNav from '../components/SeriesNav.astro';
 import TableOfContents from '../components/TableOfContents.astro';
@@ -75,6 +76,14 @@ const coverAlt = post.data.coverAlt ?? '';
       </div>
 
       <h1 data-pagefind-meta="title">{post.data.title}</h1>
+      <span class="sr-only" data-pagefind-meta="date" aria-hidden="true">
+        {formatDate(post.data.pubDate)}
+      </span>
+      {summary.tags.length > 0 && (
+        <span class="sr-only" data-pagefind-meta="tags" aria-hidden="true">
+          {summary.tags.join(', ')}
+        </span>
+      )}
 
       {post.data.description && (
         <p class="post__description">{post.data.description}</p>
@@ -85,6 +94,8 @@ const coverAlt = post.data.coverAlt ?? '';
           <Image
             src={cover}
             alt={coverAlt}
+            widths={[480, 672, 960, 1200]}
+            sizes="(min-width: 1024px) 672px, calc(100vw - 3rem)"
             loading="eager"
             fetchpriority="high"
           />
@@ -123,6 +134,8 @@ const coverAlt = post.data.coverAlt ?? '';
     <div data-pagefind-ignore>
       <PrevNext prev={prev} next={next} />
     </div>
+
+    <Comments />
   </article>
 </BaseLayout>
 

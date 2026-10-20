@@ -359,6 +359,42 @@ kbd {
   font-variant-numeric: tabular-nums;
 }
 
+/* Shared P3 Comments (.comments) & Privacy/Analytics Notice (.privacy-notice) */
+.comments {
+  max-width: var(--measure);
+}
+
+.comments__status {
+  font-family: var(--font-mono);
+}
+
+.comments__mount iframe {
+  width: 100%;
+  max-width: 100%;
+  border: 0;
+  color-scheme: light dark;
+}
+
+.privacy-notice,
+.analytics-notice {
+  max-width: var(--measure);
+  margin-block-start: var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--border);
+  border-inline-start: 2px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-muted);
+  color: var(--fg-muted);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+}
+
+.privacy-notice strong,
+.analytics-notice strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -399,6 +435,8 @@ kbd {
   .search-form__input,
   .search-form__submit,
   .series-nav,
+  .comments__load,
+  .privacy-notice,
   kbd,
   .code-copy,
   .skip-link,
@@ -422,6 +460,7 @@ kbd {
   .post__toc,
   .post__toc-mobile,
   .series-nav,
+  .comments,
   .prev-next,
   .code-copy {
     display: none !important;

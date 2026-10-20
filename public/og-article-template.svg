@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="用 Astro 内容集合管理博客文章 · DeskBox">
+  <rect width="1200" height="630" fill="#09090B"/>
+  <!-- Top Signal Bar -->
+  <rect x="0" y="0" width="1200" height="8" fill="#EC4899"/>
+  <!-- Swiss Editorial Grid Frame -->
+  <rect x="48" y="48" width="1104" height="534" fill="none" stroke="#27272A" stroke-width="2"/>
+  <line x1="48" y1="132" x2="1152" y2="132" stroke="#27272A" stroke-width="2"/>
+  <line x1="48" y1="498" x2="1152" y2="498" stroke="#27272A" stroke-width="2"/>
+
+  <!-- Header Row: Site Name + Date & Reading Time -->
+  <rect x="84" y="78" width="10" height="24" fill="#EC4899"/>
+  <text x="108" y="97" fill="#FAFAFA" font-family="'JetBrains Mono', Consolas, monospace" font-size="20" font-weight="600" letter-spacing="2">DESKBOX · ARTICLE</text>
+  <text x="1116" y="97" text-anchor="end" fill="#A1A1AA" font-family="'JetBrains Mono', Consolas, monospace" font-size="20">2026.10.18 · 约 3 分钟</text>
+
+  <!-- Article Title & Summary (Template Slots) -->
+  <text x="84" y="246" fill="#FAFAFA" font-family="'Songti SC', 'STSong', 'SimSun', Georgia, serif" font-size="60" font-weight="700">用 Astro 内容集合管理博客文章</text>
+  <text x="84" y="336" fill="#A1A1AA" font-family="'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif" font-size="28">从 schema 校验、目录约定到构建期过滤，记录内容集合在个人博客里的</text>
+  <text x="84" y="382" fill="#A1A1AA" font-family="'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif" font-size="28">实际用法与取舍。</text>
+  <rect x="84" y="426" width="120" height="4" fill="#EC4899"/>
+
+  <!-- Footer Row: Tags & Author -->
+  <text x="84" y="548" fill="#F9A8D4" font-family="'JetBrains Mono', Consolas, monospace" font-size="20" font-weight="600">#前端   #工程实践   #后端</text>
+  <text x="1116" y="548" text-anchor="end" fill="#A1A1AA" font-family="'JetBrains Mono', Consolas, monospace" font-size="18">deskbox.dev / blog</text>
+</svg>

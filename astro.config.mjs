@@ -21,7 +21,10 @@ export default defineConfig({
   site: 'http://localhost:4321',
   server: { host: '127.0.0.1' },
   trailingSlash: 'always',
-  build: { format: 'directory' },
+  build: {
+    format: 'directory',
+    inlineStylesheets: 'always',
+  },
   integrations: [mdx(), sitemap({ filter: includeInSitemap })],
   markdown: {
     remarkPlugins: [remarkGfm],

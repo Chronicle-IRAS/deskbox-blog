@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { extname, join, relative } from 'node:path';
+import { join, relative } from 'node:path';
 import { gzipSync } from 'node:zlib';
 
 const DIST = 'dist';

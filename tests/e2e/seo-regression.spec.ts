@@ -66,7 +66,14 @@ test('封面与无封面文章的 OG image 行为正确', async ({ page }) => {
   );
 
   await page.goto('/blog/hello-world/');
-  await expect(page.locator('meta[property="og:image"]')).toHaveCount(0);
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    'content',
+    `${SITE_ORIGIN}/og-default.png`,
+  );
+  await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute(
+    'content',
+    '1200',
+  );
 });
 
 test('分页与搜索页的 canonical/robots 正确', async ({ page }) => {

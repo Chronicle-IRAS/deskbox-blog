@@ -1,0 +1,9 @@
+# Copy dist/nginx-security-headers.conf to /etc/nginx/snippets/deskbox-security-headers.conf
+# and include it in every server/location block that sets its own add_header.
+
+add_header Content-Security-Policy "{{CSP_POLICY}}" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()" always;
+add_header X-Frame-Options "DENY" always;
+add_header Cross-Origin-Opener-Policy "same-origin" always;

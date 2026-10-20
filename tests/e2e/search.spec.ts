@@ -18,7 +18,10 @@ test.describe('search', () => {
     ).toBeFocused();
   });
 
-  test('returns results after Pagefind is built', async ({ page }) => {
+  test('returns results after Pagefind is built', async ({ page, request }) => {
+    const index = await request.get('/pagefind/pagefind.js');
+    expect(index.status()).toBe(200);
+
     await page.goto('/search/?q=内容集合');
     await page.waitForSelector('#search-status');
 
@@ -36,15 +39,18 @@ test.describe('search', () => {
       )
       .catch(() => {});
 
-    const error = page.locator('#search-status[data-state="error"]');
-    if (await error.isVisible()) {
-      test.skip(true, 'Pagefind index is not available in dev');
-    }
+    await expect(page.locator('#search-status')).not.toHaveAttribute(
+      'data-state',
+      'error',
+    );
 
     const firstTitle = page.locator('.search-result a').first();
     await expect(page.locator('.search-result').first()).toBeVisible();
     await expect(firstTitle).not.toHaveText('未命名');
     await expect(firstTitle).toContainText('内容集合');
+    await expect(
+      page.locator('.search-result__meta').first(),
+    ).toContainText('2026');
     await expect(page.locator('#search-input')).toHaveValue('内容集合');
   });
 });
