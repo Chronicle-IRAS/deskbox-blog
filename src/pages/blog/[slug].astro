@@ -30,6 +30,25 @@ export async function getStaticPaths() {
 const { post, prev, next } = Astro.props as Props;
 const { Content, headings } = await render(post);
 const summary = toPostSummary(post);
+const seriesMeta = post.data.series;
+const allPosts = seriesMeta ? await getPublishedPosts() : [];
+const seriesPosts = seriesMeta
+  ? allPosts
+      .filter((item) => item.data.series?.name === seriesMeta.name)
+      .sort(
+        (a, b) =>
+          (a.data.series?.order ?? 0) - (b.data.series?.order ?? 0),
+      )
+      .map(toPostSummary)
+  : [];
+const series =
+  seriesMeta && seriesPosts.length >= 2
+    ? {
+        name: seriesMeta.name,
+        order: seriesMeta.order,
+        posts: seriesPosts,
+      }
+    : undefined;
 ---
 
 <PostLayout
@@ -38,6 +57,7 @@ const summary = toPostSummary(post);
   headings={headings}
   prev={prev}
   next={next}
+  series={series}
 >
   <Content />
 </PostLayout>

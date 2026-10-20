@@ -134,6 +134,27 @@ function initSearch(): void {
     void runSearch(input.value);
   });
 
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) {
+      return;
+    }
+
+    const target = event.target;
+    if (
+      target instanceof HTMLElement &&
+      (target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable)
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    input.focus();
+    input.select();
+  });
+
   const initial = new URL(location.href).searchParams.get('q') ?? '';
   input.value = initial;
   void runSearch(initial);
