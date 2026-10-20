@@ -29,6 +29,7 @@ export interface GiscusConfig {
   category: string;
   categoryId: string;
   mapping?: 'pathname' | 'url' | 'title' | 'og:title' | 'specific' | 'number';
+  term?: string;
   reactionsEnabled?: '1' | '0';
   inputPosition?: 'top' | 'bottom';
   lang?: string;

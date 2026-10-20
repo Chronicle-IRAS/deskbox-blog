@@ -76,11 +76,11 @@ const coverAlt = post.data.coverAlt ?? '';
       </div>
 
       <h1 data-pagefind-meta="title">{post.data.title}</h1>
-      <span class="sr-only" data-pagefind-meta="date">
+      <span class="sr-only" data-pagefind-meta="date" aria-hidden="true">
         {formatDate(post.data.pubDate)}
       </span>
       {summary.tags.length > 0 && (
-        <span class="sr-only" data-pagefind-meta="tags">
+        <span class="sr-only" data-pagefind-meta="tags" aria-hidden="true">
           {summary.tags.join(', ')}
         </span>
       )}
