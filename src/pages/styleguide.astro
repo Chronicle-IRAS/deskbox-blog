@@ -237,6 +237,85 @@ import '../styles/prose.css';
         </div>
       </div>
     </section>
+
+    <section class="sg__section" aria-labelledby="sg-p3">
+      <h2 id="sg-p3">07 · P3 社交预览（OG Card）、评论与隐私视觉规范</h2>
+
+      <div class="sg__p1-block">
+        <h3>Favicon 与社交头像（<code>/favicon.svg</code> · <code>/avatar.svg</code>）</h3>
+        <div class="sg__row">
+          <img
+            class="sg__icon-preview"
+            src="/favicon.svg"
+            width="48"
+            height="48"
+            alt="DeskBox 自适应明暗 Favicon 图标"
+          />
+          <img
+            class="sg__avatar-preview"
+            src="/avatar.svg"
+            width="64"
+            height="64"
+            alt="DeskBox 512x512 瑞士编辑风社交头像"
+          />
+          <span class="sg__small">
+            <code>favicon.svg</code> 支持 <code>prefers-color-scheme</code> 自适应；<code>avatar.svg</code> 用于作者/JSON-LD/RSS 标识。
+          </span>
+        </div>
+      </div>
+
+      <div class="sg__p1-block">
+        <h3>Open Graph 社交分享卡片模板（1200×630 · 站点默认与文章模板）</h3>
+        <div class="sg__og-grid">
+          <figure class="sg__og-card">
+            <img
+              src="/og-default.svg"
+              width="1200"
+              height="630"
+              alt="DeskBox 站点默认 OG 分享图预览"
+              loading="lazy"
+            />
+            <figcaption>
+              <strong>站点默认 OG（<code>/og-default.png</code> · <code>/og-default.svg</code>）</strong>
+              <span>1200×630 · 纸感浅色底 + 8px 信号色顶栏 + 瑞士网格分栏</span>
+            </figcaption>
+          </figure>
+          <figure class="sg__og-card">
+            <img
+              src="/og-article-template.svg"
+              width="1200"
+              height="630"
+              alt="DeskBox 文章级 OG 分享图模板预览"
+              loading="lazy"
+            />
+            <figcaption>
+              <strong>文章级 OG 模板（<code>/og-article-template.svg</code>）</strong>
+              <span>1200×630 · 墨感深色底 + 日期/阅读时长 + 标题/摘要/标签槽位</span>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="sg__p1-block">
+        <h3>按需加载评论区（Opt-in Comments · <code>.comments</code>）</h3>
+        <div class="comments sg__comments-demo">
+          <div class="comments__header">
+            <h4>讨论</h4>
+            <p>评论由 GitHub Discussions (Giscus) 提供，点击后加载。未加载前零第三方请求。</p>
+          </div>
+          <button class="sg__button" type="button">加载评论（44px）</button>
+          <p class="comments__status">就绪 · 点击后按当前明暗主题同步加载 iframe</p>
+        </div>
+      </div>
+
+      <div class="sg__p1-block">
+        <h3>隐私与分析透明声明（Privacy &amp; Analytics Disclosure · <code>.privacy-notice</code>）</h3>
+        <div class="privacy-notice">
+          <strong>隐私与第三方服务说明：</strong>
+          本站默认不加载任何第三方脚本或追踪 Cookie。若启用分析（Umami）则仅采集匿名聚合访问统计；若启用评论（Giscus），仅在你主动点击“加载评论”后才会连接 GitHub Discussions。
+        </div>
+      </div>
+    </section>
   </div>
 </BaseLayout>
 
@@ -773,6 +852,74 @@ import '../styles/prose.css';
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     font-variant-numeric: tabular-nums;
+  }
+
+  .sg__icon-preview,
+  .sg__avatar-preview {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+  }
+
+  .sg__og-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-5);
+  }
+
+  .sg__og-card {
+    margin: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .sg__og-card img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1200 / 630;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sg__og-card figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-xs);
+    color: var(--fg-muted);
+  }
+
+  .sg__og-card figcaption strong {
+    color: var(--fg);
+    font-size: var(--text-sm);
+  }
+
+  .sg__comments-demo {
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+  }
+
+  .sg__comments-demo h4 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    font-weight: 600;
+  }
+
+  .sg__comments-demo .comments__header p {
+    margin: var(--space-2) 0 var(--space-4);
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+
+  .sg__comments-demo .comments__status {
+    margin: var(--space-3) 0 0;
+    color: var(--fg-muted);
+    font-size: var(--text-xs);
   }
 
   @media (max-width: 639px) {

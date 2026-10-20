@@ -5,6 +5,7 @@
 **分支：** `feat/agy-frontend`（独立工作区 `../博客-agy`，端口 `4323`）  
 **基线：** `main` @ `857632f`（含 P0 + P1 集成 + 搜索标题修复 `b0425d1` + agy 视觉调整 `9b50e66`）  
 **合并：** `main` @ `37f48c0`（`merge: 合并 agy P2 视觉收尾`）  
+**后续阶段：** [P3 社交视觉与最终 QA 报告](./agy-p3-report.md)（分支 `feat/p3-social`）  
 **关联：** [三智能体分工](./three-agent-division.md) · [前端设计任务书](./agy-frontend-design.md) · [搜索标题问题记录](./issue-search-title.md) · [视觉与交互设计](../design.md) · [设计系统](../../design-system/deskbox-blog/MASTER.md)
 
 ---
