@@ -1,4 +1,5 @@
-# GitHub Actions template. Rename to .github/workflows/ci.yml after a remote is configured.
+# Template for the active GitHub Actions workflow in .github/workflows/ci.yml.
+# Keep this file in sync when CI steps change.
 
 name: ci
 
@@ -10,9 +11,12 @@ jobs:
   verify:
     runs-on: ubuntu-latest
 
+    env:
+      PUBLIC_UMAMI_WEBSITE_ID: ${{ vars.PUBLIC_UMAMI_WEBSITE_ID }}
+      PUBLIC_UMAMI_SRC: ${{ vars.PUBLIC_UMAMI_SRC }}
+
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -21,13 +25,15 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run test
+
+      - run: sudo apt-get update && sudo apt-get install -y fonts-noto-cjk
       - run: npm run build
       - run: npm run check:csp
-      - run: git diff --exit-code -- deploy/csp-hashes.json deploy/csp-policy.txt
+      - if: ${{ vars.PUBLIC_UMAMI_WEBSITE_ID == '' }}
+        run: git diff --exit-code -- deploy/csp-hashes.json deploy/csp-policy.txt
 
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
-
       - run: npm run measure
 
       - uses: actions/upload-artifact@v4

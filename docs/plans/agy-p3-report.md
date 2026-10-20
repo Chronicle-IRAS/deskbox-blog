@@ -5,6 +5,7 @@
 **分支：** `feat/p3-social`（独立工作区 `../博客-agy`，端口 `4323`）  
 **基线：** `main` @ `2aea8aa`（含 P0/P1/P2 全部成果，47/47 E2E）  
 **合并：** `main` @ `8c999a9`（P3 集成）  
+**后续阶段：** [P4 生产发布最终视觉与社交预览 QA 报告](./agy-p4-report.md)（分支 `feat/p4-visual`）  
 **关联：** [P3 三智能体分工](./three-agent-p3.md) · [agy 前端视觉报告](./agy-frontend-report.md) · [P2 质量报告](./p2-quality-report.md) · [omp P3 报告](./omp-p3-report.md)
 
 ---

@@ -2,6 +2,7 @@
 import '../styles/tokens.css';
 import '../styles/fonts.css';
 import '../styles/global.css';
+import Analytics from '../components/Analytics.astro';
 import Seo from '../components/Seo.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
@@ -48,7 +49,7 @@ if (seoType === 'article' && (!seoPublishedTime || !seoKeywords)) {
     seoPublishedTime ??= post.data.pubDate.toISOString();
     seoModifiedTime ??= post.data.updatedDate?.toISOString();
     seoKeywords ??= post.data.tags;
-    seoImage ??= post.data.cover?.src;
+    seoImage = `/og/${post.data.slug}.png`;
   }
 }
 ---
@@ -99,5 +100,6 @@ if (seoType === 'article' && (!seoPublishedTime || !seoKeywords)) {
       <slot />
     </main>
     <SiteFooter />
+    <Analytics />
   </body>
 </html>

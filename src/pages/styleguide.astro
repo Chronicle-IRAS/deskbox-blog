@@ -239,7 +239,7 @@ import '../styles/prose.css';
     </section>
 
     <section class="sg__section" aria-labelledby="sg-p3">
-      <h2 id="sg-p3">07 · P3 社交预览（OG Card）、评论与隐私视觉规范</h2>
+      <h2 id="sg-p3">07 · P3/P4 社交预览（OG Card）、评论与隐私视觉规范</h2>
 
       <div class="sg__p1-block">
         <h3>Favicon 与社交头像（<code>/favicon.svg</code> · <code>/avatar.svg</code>）</h3>
@@ -265,7 +265,7 @@ import '../styles/prose.css';
       </div>
 
       <div class="sg__p1-block">
-        <h3>Open Graph 社交分享卡片模板（1200×630 · 站点默认与文章模板）</h3>
+        <h3>Open Graph 社交分享卡片（1200×630 · 站点默认与构建期逐篇生成）</h3>
         <div class="sg__og-grid">
           <figure class="sg__og-card">
             <img
@@ -282,15 +282,15 @@ import '../styles/prose.css';
           </figure>
           <figure class="sg__og-card">
             <img
-              src="/og-article-template.svg"
+              src="/og/astro-content-collections.png"
               width="1200"
               height="630"
-              alt="DeskBox 文章级 OG 分享图模板预览"
+              alt="DeskBox 文章级自动生成 OG 分享图预览"
               loading="lazy"
             />
             <figcaption>
-              <strong>文章级 OG 模板（<code>/og-article-template.svg</code>）</strong>
-              <span>1200×630 · 墨感深色底 + 日期/阅读时长 + 标题/摘要/标签槽位</span>
+              <strong>文章级动态 OG（<code>/og/[slug].png</code> · 源于 <code>/og-article-template.svg</code>）</strong>
+              <span>1200×630 · 墨感深色底 + 构建期按文章标题/摘要/日期/时长/标签渲染</span>
             </figcaption>
           </figure>
         </div>
@@ -309,10 +309,10 @@ import '../styles/prose.css';
       </div>
 
       <div class="sg__p1-block">
-        <h3>隐私与分析透明声明（Privacy &amp; Analytics Disclosure · <code>.privacy-notice</code>）</h3>
+        <h3>隐私与分析透明声明（Privacy &amp; Analytics Disclosure · <code>.privacy-notice</code> · <a href="/privacy/"><code>/privacy/</code></a>）</h3>
         <div class="privacy-notice">
           <strong>隐私与第三方服务说明：</strong>
-          本站默认不加载任何第三方脚本或追踪 Cookie。若启用分析（Umami）则仅采集匿名聚合访问统计；若启用评论（Giscus），仅在你主动点击“加载评论”后才会连接 GitHub Discussions。
+          本站默认不加载任何第三方脚本或追踪 Cookie。若启用分析（Umami）则仅采集匿名聚合访问统计；若启用评论（Giscus），仅在你主动点击“加载评论”后才会连接 GitHub Discussions。详见 <a href="/privacy/">隐私与数据说明页</a>。
         </div>
       </div>
     </section>

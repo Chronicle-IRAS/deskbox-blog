@@ -58,7 +58,17 @@ export const site = {
     { label: 'Email', href: 'mailto:hello@example.com', icon: 'mail' },
   ] satisfies SocialLink[],
   footer: '© 2026 DeskBox',
-  comments: { provider: 'none' } as CommentsConfig,
+  comments: {
+    provider: 'giscus',
+    repo: 'Chronicle-IRAS/deskbox-blog',
+    repoId: 'R_kgDOVQUusw',
+    category: 'Announcements',
+    categoryId: 'DIC_kwDOVQUus84DJFYE',
+    mapping: 'pathname',
+    reactionsEnabled: '1',
+    inputPosition: 'top',
+    lang: 'zh-CN',
+  } as CommentsConfig,
 };
 
 export function pageTitle(title?: string): string {
