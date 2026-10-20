@@ -1,0 +1,119 @@
+---
+import { site } from '../data/site';
+
+const giscus =
+  site.comments.provider === 'giscus' ? site.comments : null;
+---
+
+{giscus && (
+  <section
+    class="comments"
+    aria-labelledby="comments-title"
+    data-comments
+    data-repo={giscus.repo}
+    data-repo-id={giscus.repoId}
+    data-category={giscus.category}
+    data-category-id={giscus.categoryId}
+    data-mapping={giscus.mapping ?? 'pathname'}
+    data-reactions-enabled={giscus.reactionsEnabled ?? '1'}
+    data-input-position={giscus.inputPosition ?? 'top'}
+    data-lang={giscus.lang ?? 'zh-CN'}
+    data-pagefind-ignore
+  >
+    <header class="comments__header">
+      <h2 id="comments-title">讨论</h2>
+      <p>
+        评论由 GitHub Discussions 提供，点击后加载。未加载前不会产生第三方请求。
+      </p>
+    </header>
+
+    <button class="comments__load" type="button" data-comments-load>
+      加载评论
+    </button>
+
+    <p class="comments__status" data-comments-status aria-live="polite"></p>
+
+    <div id="comments-mount" class="comments__mount"></div>
+  </section>
+)}
+
+<script>
+  import '../scripts/comments';
+</script>
+
+<style>
+  .comments {
+    max-width: var(--measure);
+    margin-block-start: var(--space-8);
+    padding-block-start: var(--space-5);
+    border-top: 1px solid var(--border);
+  }
+
+  .comments__header h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .comments__header p {
+    margin: var(--space-2) 0 0;
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+  }
+
+  .comments__load {
+    min-height: 44px;
+    margin-block-start: var(--space-4);
+    padding: 0 var(--space-5);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--fg);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .comments__load:hover {
+    border-color: var(--fg);
+    background: var(--surface-muted);
+  }
+
+  .comments__load:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .comments__load:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+
+  .comments__status {
+    margin: var(--space-2) 0 0;
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+
+  .comments__status[data-state="error"] {
+    color: var(--error);
+  }
+
+  .comments__mount {
+    margin-block-start: var(--space-5);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .comments__load {
+      transition: none;
+    }
+  }
+</style>
