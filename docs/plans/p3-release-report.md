@@ -3,7 +3,8 @@
 **执行者：** Claude Code  
 **日期：** 2026-10-20  
 **基线：** `main` @ `2aea8aa`  
-**分支：** `feat/p3-release` → `feat/p3-integration`（未合并到 `main`）
+**分支：** `feat/p3-release` → `feat/p3-integration`  
+**合并：** `main` @ `8c999a9`（`merge: 合并 P3 上线准备到 main`）
 
 ---
 
@@ -134,4 +135,4 @@
 
 - `feat/p3-release`：性能、CSP/安全策略、部署模板。
 - `feat/p3-integration`：已并入 omp P3（评论/搜索收尾）与 agy P3（OG/社交视觉）。
-- 未合并到 `main`；全量检查通过后再由用户确认。
+- 已合并到 `main` @ `8c999a9`；P3 完成。实际托管待用户确定。

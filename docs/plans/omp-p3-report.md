@@ -79,7 +79,7 @@ comments: {
 
 ## 4. 状态与交接
 
-- 分支 `feat/p3-comments` 已提交，待合并 `main`。
+- 分支 `feat/p3-comments` 已合并到 `main` @ `8c999a9`。
 - 评论默认关闭；启用前需要真实 Giscus repo/category ID 与 CSP。
 - 未做：Giscus 真实加载测试（需要公开仓库/网络）、可选 `/series/` 索引、部署/CSP/OG。
 - Claude P3 接入 CSP/部署后，再验证 Giscus 实际加载。
