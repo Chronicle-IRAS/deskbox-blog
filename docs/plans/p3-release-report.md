@@ -45,9 +45,9 @@
 
 | 项 | 结果 |
 |---|---|
-| HTML gzip | 首页 7.6 KB；长文 13.2 KB（含评论加载器） |
+| HTML gzip | 首页 7.8 KB；长文 13.3 KB（含评论加载器） |
 | 外部 CSS / JS | 无（全部内联） |
-| 图片 | 7 个变体，48.2 KB gzip |
+| 图片 | 12 个文件，167.4 KB gzip（含 OG/头像） |
 | Pagefind | 25 个文件，207.6 KB gzip（按需） |
 
 > 内联 CSS 以“每次 HTML 请求携带样式”换取无阻塞首屏；个人博客内容规模下可接受。
@@ -83,6 +83,13 @@
 - 404 增加搜索入口；搜索结果显示日期/标签（Pagefind meta）。
 - 搜索 E2E 不再把任何 Pagefind 错误当作 dev 跳过；preview/CI 下缺失索引会失败。
 
+**OG / 社交（agy）**
+
+- 合并 `og-default.png`、`og-article-template.svg`、`avatar.svg` 与自适应 favicon。
+- `Seo.astro` 对无封面页面回退 `/og-default.png`（1200×630）；
+  首页 `Person` JSON-LD 使用 `/avatar.svg`。
+- 有封面文章继续使用 Astro 优化后的封面图作为 `og:image`。
+
 ---
 
 ## 5. 验证结果
@@ -114,7 +121,6 @@
 
 ## 7. 待办与依赖
 
-- **agy P3**：OG 图、favicon/分享卡片、部署预览视觉 QA 尚未提交；`feat/p3-social` 仍停在 `main`。
 - **托管/域名**：等待用户服务器计划；HSTS、缓存与正式 canonical 在确定后启用。
 - **作者资料**：`site.author.bio` 仍为 `{{一句话简介}}`。
 - **CI**：模板已备，需先配置 remote。
@@ -125,5 +131,5 @@
 ## 8. 分支状态
 
 - `feat/p3-release`：性能、CSP/安全策略、部署模板。
-- `feat/p3-integration`：已并入 omp P3 评论与阅读收尾；等待 agy P3。
+- `feat/p3-integration`：已并入 omp P3（评论/搜索收尾）与 agy P3（OG/社交视觉）。
 - 未合并到 `main`；全量检查通过后再由用户确认。
