@@ -62,10 +62,29 @@ test('封面与无封面文章的 OG image 行为正确', async ({ page }) => {
   await page.goto('/blog/astro-content-collections/');
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
     'content',
-    /^http:\/\/localhost:4321\/(?:_astro\/|@fs\/)/,
+    `${SITE_ORIGIN}/og/astro-content-collections.png`,
   );
 
   await page.goto('/blog/hello-world/');
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    'content',
+    `${SITE_ORIGIN}/og/hello-world.png`,
+  );
+});
+
+test('文章 OG 图可由构建生成', async ({ request }) => {
+  for (const slug of ['astro-content-collections', 'hello-world']) {
+    const response = await request.get(`/og/${slug}.png`);
+
+    expect(response.status()).toBe(200);
+    expect(response.headers()['content-type']).toContain('image/png');
+    expect((await response.body()).byteLength).toBeGreaterThan(1000);
+  }
+});
+
+test('非文章页面使用默认 OG 图', async ({ page }) => {
+  await page.goto('/');
+
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
     'content',
     `${SITE_ORIGIN}/og-default.png`,

@@ -36,7 +36,7 @@ test('文章页输出 BlogPosting 与文章元数据', async ({ page }) => {
   );
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
     'content',
-    /^http:\/\/localhost:4321\/(?:_astro\/|@fs\/)/,
+    'http://localhost:4321/og/astro-content-collections.png',
   );
   await expect(page.locator('meta[property="article:published_time"]')).toHaveAttribute(
     'content',
@@ -51,8 +51,8 @@ test('文章页输出 BlogPosting 与文章元数据', async ({ page }) => {
   expect(jsonLd.headline).toBe('用 Astro 内容集合管理博客文章');
   expect(jsonLd.datePublished).toBe('2026-10-18T00:00:00.000Z');
   expect(jsonLd.keywords).toBe('前端, 工程实践, 后端');
-  expect(String(jsonLd.image)).toMatch(
-    /^http:\/\/localhost:4321\/(?:_astro\/|@fs\/)/,
+  expect(String(jsonLd.image)).toBe(
+    'http://localhost:4321/og/astro-content-collections.png',
   );
 });
 
