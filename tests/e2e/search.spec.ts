@@ -45,6 +45,9 @@ test.describe('search', () => {
     await expect(page.locator('.search-result').first()).toBeVisible();
     await expect(firstTitle).not.toHaveText('未命名');
     await expect(firstTitle).toContainText('内容集合');
+    await expect(
+      page.locator('.search-result__meta').first(),
+    ).toContainText('2026');
     await expect(page.locator('#search-input')).toHaveValue('内容集合');
   });
 });

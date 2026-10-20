@@ -4,6 +4,8 @@ interface PagefindData {
   excerpt: string;
   meta?: {
     title?: string;
+    date?: string;
+    tags?: string;
   };
 }
 
@@ -42,6 +44,10 @@ function initSearch(): void {
       link.href = item.url;
       link.textContent = item.meta?.title || item.title || '未命名';
 
+      const metaText = [item.meta?.date, item.meta?.tags]
+        .filter((value): value is string => Boolean(value))
+        .join(' · ');
+
       const excerpt = document.createElement('p');
       excerpt.className = 'search-excerpt';
 
@@ -54,7 +60,14 @@ function initSearch(): void {
       });
       excerpt.append(template.content);
 
-      listItem.append(link, excerpt);
+      listItem.append(link);
+      if (metaText) {
+        const meta = document.createElement('p');
+        meta.className = 'search-result__meta';
+        meta.textContent = metaText;
+        listItem.append(meta);
+      }
+      listItem.append(excerpt);
       results.append(listItem);
     }
   };
