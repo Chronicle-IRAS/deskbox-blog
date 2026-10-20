@@ -45,10 +45,10 @@
 
 | 项 | 结果 |
 |---|---|
-| HTML gzip | 首页 7.6 KB；长文 12.1 KB |
+| HTML gzip | 首页 7.6 KB；长文 13.2 KB（含评论加载器） |
 | 外部 CSS / JS | 无（全部内联） |
 | 图片 | 7 个变体，48.2 KB gzip |
-| Pagefind | 25 个文件，206.7 KB gzip（按需） |
+| Pagefind | 25 个文件，207.6 KB gzip（按需） |
 
 > 内联 CSS 以“每次 HTML 请求携带样式”换取无阻塞首屏；个人博客内容规模下可接受。
 
@@ -58,11 +58,16 @@
 
 - 策略文档：`docs/p3-security.md`。
 - CSP：`script-src 'self' 'wasm-unsafe-eval' <sha256 hashes>`，脚本不使用 `unsafe-inline`。
-- `npm run csp` 从构建产物生成 `deploy/csp-hashes.json`（当前 5 个哈希）；
-  `npm run check:csp` 校验漂移。
-- 头与缓存模板：`deploy/headers.example`（Cloudflare/Netlify）、`deploy/nginx.example.conf`。
-- CI 模板：`deploy/ci.example.yml`（Node 24，check/test/build/check:csp/e2e）。
-- 评论启用时需追加 `https://giscus.app` 到 `script-src` / `frame-src` / `connect-src`。
+- `npm run build` 自动生成 `deploy/csp-hashes.json`、`deploy/csp-policy.txt`、
+  `dist/_headers`、`dist/nginx.conf` 与 `dist/nginx-security-headers.conf`。
+- `npm run check:csp` 校验哈希、策略与实际生成的 headers/nginx 配置一致。
+- 评论开关自动进入 CSP：`provider: 'giscus'` 时生成器加入 `https://giscus.app`
+  到 `script-src` / `connect-src` / `frame-src`。
+- CI 模板：`deploy/ci.example.yml`（Node 24，check/test/build/check:csp/e2e，
+  并检查 `deploy/csp-*` 无漂移）。
+- Nginx 模板在每个设置 `Cache-Control` 的 location 中 include 安全头片段，
+  避免 `add_header` 覆盖；包含 `error_page 404 /404.html` 与 favicon 缓存。
+- Pagefind 1.5.2 不使用 `.wasm` 流式加载，模板已移除无效的 wasm MIME 映射。
 - 分析保持关闭；若启用 Umami，再追加对应域名与隐私说明。
 - HSTS 仅在 HTTPS 与域名稳定后启用。
 
@@ -72,9 +77,11 @@
 
 - `Comments.astro` + `site.comments` 契约已并入；默认 `provider: 'none'`。
 - 默认关闭时：不渲染评论区、不加载 Giscus、无第三方请求。
-- 启用后：点击加载，具备加载/失败状态与隐私说明。
+- 启用后：点击加载；脚本、iframe 或 CSP 失败均有错误提示与重试；
+  `mapping: 'specific' | 'number'` 通过 `term` 输出 `data-term`。
+- Pagefind meta 的日期/标签标记为 `aria-hidden`，避免屏幕阅读器重复播报。
 - 404 增加搜索入口；搜索结果显示日期/标签（Pagefind meta）。
-- 新增评论与 404 搜索 E2E。
+- 搜索 E2E 不再把任何 Pagefind 错误当作 dev 跳过；preview/CI 下缺失索引会失败。
 
 ---
 
@@ -96,8 +103,9 @@
 1. Node 24；`npm ci`。
 2. `npm run check && npm run test && npm run build && npm run check:csp && npm run test:e2e`。
 3. 将 `dist/` 上传到目标静态托管。
-4. 按 `deploy/headers.example` 或 `deploy/nginx.example.conf` 配置 CSP、安全头与缓存。
-5. 确认 `.wasm` 返回 `application/wasm`；`/_astro/*` 长缓存。
+4. 使用构建生成的 `dist/_headers`（Cloudflare/Netlify）或
+   `dist/nginx.conf` + `dist/nginx-security-headers.conf` 配置安全头与缓存。
+5. 确认 `/_astro/*` 长缓存；Pagefind 的 `wasm.unknown.pagefind` 可正常取回。
 6. 更新 `site` 为正式域名，重新构建；检查 canonical、RSS、sitemap、OG。
 7. 部署预览验证：首页、列表、分页、文章、标签、归档、搜索、About、404。
 8. 回滚：`git revert` 目标提交 → 重新构建 → 重新部署；无需数据库回滚。
