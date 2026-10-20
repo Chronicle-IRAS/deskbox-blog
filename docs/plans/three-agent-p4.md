@@ -2,7 +2,7 @@
 
 **基线：** `main` @ `b817695`（P0–P4 完成；51/51 E2E；GitHub Actions 通过）  
 **目标：** 从“可上线”推进到“已上线并可持续运营”，并把 P0–P3 遇到的问题沉淀为可复用经验。  
-**关联：** [P3 上线准备](./three-agent-p3.md) · [P3 上线报告](./p3-release-report.md) · [三智能体分工](./three-agent-division.md)
+**关联：** [P3 上线准备](./three-agent-p3.md) · [P3 上线报告](./p3-release-report.md) · [三智能体分工](./three-agent-division.md) · [P5 内容运营](./p5-content-ops.md)
 
 ---
 

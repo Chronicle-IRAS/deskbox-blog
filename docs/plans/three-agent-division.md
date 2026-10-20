@@ -1,8 +1,8 @@
 # 三智能体分工：Claude Code / omp / agy
 
-**基线：** `main` @ `1d33633`（P0/P1/P2/P3 完成；49/49 E2E）  
-**下一步：** [P3 上线准备](./three-agent-p3.md) · [P4 上线运营与问题记录](./three-agent-p4.md)  
-**目标：** 记录 P0–P3 的分工与所有权，并指引下一轮 P4 上线运营。  
+**基线：** `main` @ `562956e`（P0–P4 完成；51/51 E2E；CI 通过）  
+**下一步：** [P3 上线准备](./three-agent-p3.md) · [P4 上线运营与问题记录](./three-agent-p4.md) · [P5 内容运营](./p5-content-ops.md)  
+**目标：** 记录 P0–P4 的分工与所有权，并指引下一轮 P5 内容运营。  
 **关联：** [P1 并行实施](./p1-parallel.md) · [agy 前端设计任务书](./agy-frontend-design.md) · [omp P1 报告](./omp-p1-report.md) · [P0 集成报告](./p0-integration-report.md)
 
 ---
