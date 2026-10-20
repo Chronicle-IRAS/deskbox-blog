@@ -184,10 +184,56 @@ import '../styles/prose.css';
           </div>
           <div class="sg__search-result">
             <a href="/blog/astro-content-collections/">用 Astro 内容集合管理博客文章</a>
+            <div class="search-result__meta">
+              <time datetime="2026-10-18">2026.10.18</time>
+              <span>#前端 · #工程实践</span>
+            </div>
             <p>
               ……把散落在目录里的 Markdown 变成有类型、可校验的数据。<mark>内容集合</mark>把检查提前到构建阶段……
             </p>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg__section" aria-labelledby="sg-p2">
+      <h2 id="sg-p2">06 · P2 阅读与检索增强视觉规范</h2>
+
+      <div class="sg__p1-block">
+        <h3>文章系列导航（SeriesNav · <code>.series-nav</code>）</h3>
+        <aside class="series-nav sg__series-demo" aria-label="系列导航示例">
+          <header class="series-nav__header">
+            <div>
+              <p class="series-nav__eyebrow">系列</p>
+              <h4>工程复盘笔记</h4>
+            </div>
+            <p class="series-nav__progress">第 1 / 2 篇</p>
+          </header>
+          <ol class="series-nav__list">
+            <li class="series-nav__item">
+              <span class="series-nav__link" aria-current="page">
+                <span class="series-nav__index">01</span>
+                <span>把构建时间当作一种反馈</span>
+              </span>
+            </li>
+            <li class="series-nav__item">
+              <a class="series-nav__link" href="/blog/post-02/">
+                <span class="series-nav__index">02</span>
+                <span>小团队里的代码评审</span>
+              </a>
+            </li>
+          </ol>
+        </aside>
+      </div>
+
+      <div class="sg__p1-block">
+        <h3>搜索快捷键与无结果推荐（Search Shortcut &amp; Empty State）</h3>
+        <p class="sg__small">
+          按 <kbd>/</kbd> 快速聚焦搜索框；未命中关键词时展示标签与归档引导：
+        </p>
+        <div class="search-empty">
+          没有找到匹配的内容。试试更短的关键词，或直接浏览
+          <a href="/tags/">标签索引</a> 与 <a href="/archive/">按年归档</a>。
         </div>
       </div>
     </section>
@@ -655,6 +701,78 @@ import '../styles/prose.css';
     background: color-mix(in srgb, var(--selection-bg) 42%, var(--surface));
     color: var(--fg);
     font-weight: 600;
+  }
+
+  .sg__series-demo {
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+  }
+
+  .sg__series-demo .series-nav__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block-end: var(--space-3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sg__series-demo .series-nav__eyebrow {
+    margin: 0 0 var(--space-1);
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+  }
+
+  .sg__series-demo h4 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .sg__series-demo .series-nav__progress {
+    margin: 0;
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+
+  .sg__series-demo .series-nav__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sg__series-demo .series-nav__item + .series-nav__item {
+    border-top: 1px solid var(--border);
+  }
+
+  .sg__series-demo .series-nav__link {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    min-height: 44px;
+    padding-block: var(--space-2);
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+    text-decoration: none;
+  }
+
+  .sg__series-demo .series-nav__link[aria-current="page"] {
+    color: var(--fg);
+    font-weight: 600;
+  }
+
+  .sg__series-demo .series-nav__index {
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-variant-numeric: tabular-nums;
   }
 
   @media (max-width: 639px) {
