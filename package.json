@@ -11,6 +11,8 @@
     "check": "astro check && tsc --noEmit",
     "test": "vitest run",
     "measure": "node scripts/measure-size.mjs",
+    "csp": "node scripts/csp-hashes.mjs",
+    "check:csp": "node scripts/csp-hashes.mjs --check",
     "clean": "node scripts/clean.mjs",
     "build": "npm run clean && astro build && pagefind --site dist",
     "preview": "astro preview",
