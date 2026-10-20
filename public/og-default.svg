@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="DeskBox · 写代码，也写生活。">
+  <rect width="1200" height="630" fill="#FAFAFA"/>
+  <!-- Top Signal Bar -->
+  <rect x="0" y="0" width="1200" height="8" fill="#BE185D"/>
+  <!-- Swiss Editorial Grid Frame -->
+  <rect x="48" y="48" width="1104" height="534" fill="none" stroke="#E4E4E7" stroke-width="2"/>
+  <line x1="48" y1="132" x2="1152" y2="132" stroke="#E4E4E7" stroke-width="2"/>
+  <line x1="48" y1="498" x2="1152" y2="498" stroke="#E4E4E7" stroke-width="2"/>
+  <line x1="820" y1="132" x2="820" y2="498" stroke="#E4E4E7" stroke-width="2"/>
+
+  <!-- Header Row -->
+  <rect x="84" y="78" width="10" height="24" fill="#BE185D"/>
+  <text x="108" y="97" fill="#09090B" font-family="'JetBrains Mono', Consolas, monospace" font-size="20" font-weight="600" letter-spacing="2">DESKBOX · SWISS EDITORIAL</text>
+  <text x="1116" y="97" text-anchor="end" fill="#52525B" font-family="'JetBrains Mono', Consolas, monospace" font-size="18" letter-spacing="1">ZH-CN / STATIC</text>
+
+  <!-- Primary Column -->
+  <text x="84" y="268" fill="#09090B" font-family="Georgia, 'Libre Bodoni', 'Songti SC', 'STSong', 'SimSun', serif" font-size="88" font-weight="700" letter-spacing="-2">DeskBox</text>
+  <text x="84" y="356" fill="#09090B" font-family="'Songti SC', 'STSong', 'SimSun', Georgia, serif" font-size="48" font-weight="600">写代码，也写生活。</text>
+  <text x="84" y="424" fill="#52525B" font-family="'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif" font-size="26">以内容与排版为中心的个人技术与阅读归档。</text>
+
+  <!-- Right Column Index Spec -->
+  <text x="860" y="210" fill="#52525B" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" letter-spacing="2">SECTIONS</text>
+  <text x="860" y="262" fill="#09090B" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="24" font-weight="600">01 · 前端与工程实践</text>
+  <text x="860" y="314" fill="#09090B" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="24" font-weight="600">02 · 架构与构建复盘</text>
+  <text x="860" y="366" fill="#09090B" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="24" font-weight="600">03 · 阅读与长文笔记</text>
+  <rect x="860" y="408" width="96" height="4" fill="#BE185D"/>
+
+  <!-- Footer Row -->
+  <text x="84" y="548" fill="#52525B" font-family="'JetBrains Mono', Consolas, monospace" font-size="18">ASTRO STATIC · ZERO THIRD-PARTY TRACKING</text>
+  <text x="1116" y="548" text-anchor="end" fill="#09090B" font-family="'JetBrains Mono', Consolas, monospace" font-size="18" font-weight="600">#前端  #工程实践  #阅读</text>
+</svg>
