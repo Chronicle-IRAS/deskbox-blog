@@ -4,6 +4,7 @@
 **日期：** 2026-10-20  
 **分支：** `feat/p4-visual`（独立工作区 `../博客-agy`，端口 `4323`）  
 **基线：** `feat/p4-release` @ `6f1ece1`（含 Giscus 评论启用、Umami 可选分析与 `/privacy/` 页面、每篇文章 `/og/[slug].png` 自动生成、CSP 哈希锁与 GitHub Actions CI）  
+**合并：** `main` @ `b817695`（P4 上线运营）  
 **关联：** [P4 三智能体分工](./three-agent-p4.md) · [P4 上线决策](./p4-decisions.md) · [P4 发布报告](./p4-release-report.md) · [agy P3 报告](./agy-p3-report.md) · [agy 前端视觉报告](./agy-frontend-report.md) · [视觉与交互设计](../design.md) · [设计系统](../../design-system/deskbox-blog/MASTER.md)
 
 ---

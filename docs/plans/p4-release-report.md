@@ -4,6 +4,7 @@
 **日期：** 2026-10-20  
 **基线：** `main` @ `e196f25`  
 **分支：** `feat/p4-release`  
+**合并：** `main` @ `b817695`（`merge: 合并 P4 上线运营到 main`）  
 **范围：** CI、分析、每篇 OG、运维 runbook 与集成准备
 
 ---
@@ -104,7 +105,7 @@
 
 ## 9. 交接
 
-- `feat/p4-release` 已完成 Claude P4 的平台无关部分。
-- omp `feat/p4-comments`、agy `feat/p4-visual` 尚未提交；
-  就绪后由 Claude 创建 `feat/p4-integration` 并跑全量检查。
-- 托管/域名确定后再执行部署与生产预览验收。
+- `feat/p4-release` 已并入 agy `feat/p4-visual`，并合并到 `main` @ `b817695`。
+- 本地验收：`check` 0 errors、单元 34/34、构建 27 页 + 12 张 OG、`check:csp` 通过、E2E 51/51。
+- GitHub Actions 在 `main` 推送后运行 `check/test/build/check:csp/e2e/measure`。
+- 托管/域名确定后再执行部署与生产预览验收；Umami 仍需 Website ID。

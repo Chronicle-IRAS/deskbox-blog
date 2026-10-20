@@ -1,6 +1,6 @@
 # P4 三智能体分工与问题记录
 
-**基线：** `main` @ `1d33633`（P0/P1/P2/P3 完成；49/49 E2E）  
+**基线：** `main` @ `b817695`（P0–P4 完成；51/51 E2E；GitHub Actions 通过）  
 **目标：** 从“可上线”推进到“已上线并可持续运营”，并把 P0–P3 遇到的问题沉淀为可复用经验。  
 **关联：** [P3 上线准备](./three-agent-p3.md) · [P3 上线报告](./p3-release-report.md) · [三智能体分工](./three-agent-division.md)
 
@@ -18,7 +18,7 @@
 | 远程仓库 / CI | GitHub/GitLab 等 | CI、Giscus、部署 | **GitHub**：`https://github.com/Chronicle-IRAS/deskbox-blog` |
 | Node | 24 LTS | 构建/测试 | `.nvmrc` 为 24；本机 23.9 仍有 `EBADENGINE` |
 
-> 当前：GitHub 仓库已创建并推送；Giscus 已启用（CSP 自动加入 `giscus.app`）；Umami 组件已接入，但缺少 Website ID，未加载脚本。托管/域名仍按本地原型处理。
+> 当前：P4 已合并 `main` @ `b817695`；GitHub Actions `verify` 通过。Giscus 已启用；Umami 组件已接入，但缺少 Website ID；托管暂不考虑，域名保持 localhost。
 
 ---
 
