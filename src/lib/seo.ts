@@ -36,6 +36,7 @@ export function buildWebsiteJsonLd(base: URL | string = site.url): Record<string
         '@type': 'Person',
         name: site.author.name,
         url: toAbsoluteUrl('/about/', base),
+        image: toAbsoluteUrl('/avatar.svg', base),
       },
     ],
   };
