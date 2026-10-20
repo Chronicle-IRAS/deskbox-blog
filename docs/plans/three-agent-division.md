@@ -1,6 +1,6 @@
 # 三智能体分工：Claude Code / omp / agy
 
-**基线：** `main` @ `9b50e66`（P0/P1 完成；agy P2 视觉已合并）  
+**基线：** `main` @ `d45f7b6`（P0/P1/P2 首轮完成）  
 **目标：** 明确当前 P1 收尾与下一轮 P2 的分工、所有权、共享契约和集成顺序。  
 **关联：** [P1 并行实施](./p1-parallel.md) · [agy 前端设计任务书](./agy-frontend-design.md) · [omp P1 报告](./omp-p1-report.md) · [P0 集成报告](./p0-integration-report.md)
 

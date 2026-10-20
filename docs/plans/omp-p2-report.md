@@ -58,7 +58,6 @@
 
 ## 4. 状态与交接
 
-- 分支 `feat/p2-omp-reading` 已提交，未合并 `main`。
-- 当前 `main` 工作区有 Claude P2 未提交改动（`package.json`、`scripts/`、`tests/e2e/links.spec.ts` 等），为避免干扰，omp 不在主工作区执行合并。
-- Claude P2 完成后，按顺序合并 omp P2 → 创建 `feat/p2-integration` → 全量验证 → 合并 `main`。
-- 合并时注意 `src/content/blog/2026/10/post-01|02/index.md` 的系列元数据与 Claude 内容改动无冲突。
+- 分支 `feat/p2-omp-reading` 已合并到 `main` @ `d45f7b6`。
+- 集成后：`npm run check` 0 errors；`npm run test` 29/29；`npm run build` 26 页 + Pagefind；`npm run test:e2e` 47/47。
+- 系列导航、`/` 快捷键与搜索标题修复均已进入 `main`。

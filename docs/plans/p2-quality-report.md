@@ -117,9 +117,9 @@ Lighthouse 移动端导航审计（首页）：Accessibility 100、Best Practice
 
 ## 8. 集成状态
 
-- agy P2 视觉已合并到 `main`。
-- omp P2 分支 `feat/p2-omp-reading` 尚未提交；`feat/p2-integration` 待 omp 就绪后创建。
-- 本分支只改 `package.json`、`scripts/`、`tests/e2e/`，未触碰 omp/agy 页面与样式文件。
+- agy P2 视觉、omp P2 系列导航/搜索快捷键、Claude P2 质量门禁均已合并。
+- `feat/p2-integration` 已合并到 `main` @ `d45f7b6`。
+- 集成后：`npm run check` 0 errors；`npm run test` 29/29；`npm run build` 26 页 + Pagefind；`npm run test:e2e` 47/47。
 
 ---
 
