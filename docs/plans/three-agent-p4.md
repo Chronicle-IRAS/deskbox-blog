@@ -10,15 +10,15 @@
 
 | 决策 | 选项 | 影响 | 当前 |
 |---|---|---|---|
-| 托管 | Cloudflare Pages / 国内 OSS+CDN+备案 / 自有 Nginx | 部署、CSP、缓存、访问速度 | 未定；P3 已生成 headers/nginx 模板 |
-| 域名 / site URL | 正式域名 | canonical、RSS、sitemap、OG、CSP | `http://localhost:4321` 占位 |
-| 评论 | 关闭 / Giscus | 公开 repo、CSP、隐私 | 默认关闭 |
-| 分析 | 关闭 / Umami | 脚本、CSP、隐私 | 关闭 |
+| 托管 | Cloudflare Pages / 国内 OSS+CDN+备案 / 自有 Nginx | 部署、CSP、缓存、访问速度 | **暂不考虑**；P3 已生成 headers/nginx 模板 |
+| 域名 / site URL | 正式域名 | canonical、RSS、sitemap、OG、CSP | **`http://localhost:4321`** |
+| 评论 | 关闭 / Giscus | 公开 repo、CSP、隐私 | **已启用**：`Chronicle-IRAS/deskbox-blog` / Announcements |
+| 分析 | 关闭 / Umami | 脚本、CSP、隐私 | **已接入**；等待 `PUBLIC_UMAMI_WEBSITE_ID` |
 | 作者资料 | 姓名/简介/社交/头像 | 首页、About、JSON-LD | 占位 |
-| 远程仓库 / CI | GitHub/GitLab 等 | CI、Giscus、部署 | 无 remote |
-| Node | 24 LTS | 构建/测试 | 本机 23.9，有 `EBADENGINE` |
+| 远程仓库 / CI | GitHub/GitLab 等 | CI、Giscus、部署 | **GitHub**：`https://github.com/Chronicle-IRAS/deskbox-blog` |
+| Node | 24 LTS | 构建/测试 | `.nvmrc` 为 24；本机 23.9 仍有 `EBADENGINE` |
 
-> 未确认前，P4 只做不依赖平台的工作；托管/域名/评论/分析一旦确定，再启用对应配置。
+> 当前：GitHub 仓库已创建并推送；Giscus 已启用（CSP 自动加入 `giscus.app`）；Umami 组件已接入，但缺少 Website ID，未加载脚本。托管/域名仍按本地原型处理。
 
 ---
 
