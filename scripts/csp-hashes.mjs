@@ -41,7 +41,20 @@ function commentsEnabled() {
   return /comments:\s*\{[^}]*provider:\s*'giscus'/s.test(source);
 }
 
-function buildPolicy(hashes, giscus) {
+function analyticsOrigin() {
+  if (!process.env.PUBLIC_UMAMI_WEBSITE_ID) return null;
+
+  const src =
+    process.env.PUBLIC_UMAMI_SRC ?? 'https://cloud.umami.is/script.js';
+
+  try {
+    return new URL(src).origin;
+  } catch {
+    return null;
+  }
+}
+
+function buildPolicy(hashes, giscus, analytics) {
   const scriptSrc = ["'self'", "'wasm-unsafe-eval'", ...hashes];
   const connectSrc = ["'self'"];
   let frameSrc = ["'none'"];
@@ -50,6 +63,11 @@ function buildPolicy(hashes, giscus) {
     scriptSrc.push('https://giscus.app');
     connectSrc.push('https://giscus.app');
     frameSrc = ['https://giscus.app'];
+  }
+
+  if (analytics) {
+    scriptSrc.push(analytics);
+    connectSrc.push(analytics);
   }
 
   return [
@@ -70,7 +88,8 @@ function buildPolicy(hashes, giscus) {
 
 const hashes = collectHashes();
 const giscus = commentsEnabled();
-const policy = buildPolicy(hashes, giscus);
+const analytics = analyticsOrigin();
+const policy = buildPolicy(hashes, giscus, analytics);
 
 if (check) {
   if (!existsSync(HASH_FILE) || !existsSync(POLICY_FILE)) {

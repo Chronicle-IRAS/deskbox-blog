@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { pageTitle, site } from '../data/site';
+import '../styles/prose.css';
+
+const email =
+  site.social.find((link) => link.icon === 'mail')?.href ??
+  'mailto:hello@example.com';
+---
+
+<BaseLayout
+  title={pageTitle('隐私')}
+  description="DeskBox 的评论、分析与数据处理说明。"
+>
+  <article class="privacy prose">
+    <h1>隐私</h1>
+
+    <p>
+      这个站点是个人博客。默认不设置 Cookie，也不主动收集个人数据。以下说明在启用相关功能时会发生什么。
+    </p>
+
+    <h2>评论</h2>
+    <p>
+      评论由 GitHub Discussions 提供（Giscus）。页面默认不加载评论；只有点击“加载评论”后，
+      才会请求 <code>giscus.app</code> 并显示评论框。评论内容与 GitHub 账号信息由 GitHub 处理，
+      本站不存储评论数据。
+    </p>
+
+    <h2>分析</h2>
+    <p>
+      分析使用 Umami（启用时）。Umami 不使用 Cookie，统计聚合的页面访问数据，
+      不用于广告或跨站追踪。若未配置 Website ID，则不会加载分析脚本。
+    </p>
+
+    <h2>第三方请求</h2>
+    <p>
+      未点击评论时，页面不产生第三方请求。字体、脚本与图片均由本站提供；
+      没有外部字体 CDN、广告或社交追踪脚本。
+    </p>
+
+    <h2>联系</h2>
+    <p>
+      如有隐私相关问题，可以通过
+      <a href={email}>邮件</a>
+      联系作者。
+    </p>
+  </article>
+</BaseLayout>
+
+<style>
+  .privacy {
+    margin-inline: auto;
+  }
+</style>

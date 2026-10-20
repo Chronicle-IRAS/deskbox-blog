@@ -2,6 +2,7 @@
 import '../styles/tokens.css';
 import '../styles/fonts.css';
 import '../styles/global.css';
+import Analytics from '../components/Analytics.astro';
 import Seo from '../components/Seo.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
@@ -99,5 +100,6 @@ if (seoType === 'article' && (!seoPublishedTime || !seoKeywords)) {
       <slot />
     </main>
     <SiteFooter />
+    <Analytics />
   </body>
 </html>
