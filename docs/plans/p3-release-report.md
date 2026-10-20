@@ -125,6 +125,8 @@
 - **作者资料**：`site.author.bio` 仍为 `{{一句话简介}}`。
 - **CI**：模板已备，需先配置 remote。
 - **Node**：当前开发机 Node 23.9 触发 Vitest 引擎警告，建议 Node 24 LTS。
+- **启用 Giscus 的端到端验证**：需临时把 `site.comments.provider` 改为 `giscus`
+  并填入 repo/ID 后重新构建；默认关闭路径已由 E2E 覆盖，启用路径尚未自动化。
 
 ---
 
