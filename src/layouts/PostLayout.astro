@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import type { MarkdownHeading } from 'astro';
 import BaseLayout from './BaseLayout.astro';
 import PrevNext from '../components/PrevNext.astro';
+import SeriesNav from '../components/SeriesNav.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import { pageTitle } from '../data/site';
 import { tags } from '../data/tags';
@@ -16,9 +17,14 @@ interface Props {
   headings: MarkdownHeading[];
   prev?: PostSummary;
   next?: PostSummary;
+  series?: {
+    name: string;
+    order: number;
+    posts: PostSummary[];
+  };
 }
 
-const { post, summary, headings, prev, next } = Astro.props;
+const { post, summary, headings, prev, next, series } = Astro.props;
 const tocHeadings = headings.filter(
   (heading) =>
     (heading.depth === 2 || heading.depth === 3) &&
@@ -104,6 +110,15 @@ const coverAlt = post.data.coverAlt ?? '';
         </aside>
       )}
     </div>
+
+    {series && series.posts.length >= 2 && (
+      <SeriesNav
+        name={series.name}
+        order={series.order}
+        posts={series.posts}
+        currentSlug={summary.slug}
+      />
+    )}
 
     <div data-pagefind-ignore>
       <PrevNext prev={prev} next={next} />
