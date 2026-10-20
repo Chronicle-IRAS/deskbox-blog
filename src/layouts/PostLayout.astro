@@ -85,6 +85,8 @@ const coverAlt = post.data.coverAlt ?? '';
           <Image
             src={cover}
             alt={coverAlt}
+            widths={[480, 672, 960, 1200]}
+            sizes="(min-width: 1024px) 672px, calc(100vw - 3rem)"
             loading="eager"
             fetchpriority="high"
           />
