@@ -9,6 +9,15 @@ test.describe('search', () => {
     await expect(page.locator('#search-status')).toContainText('输入关键词');
   });
 
+  test('focuses the search input with slash', async ({ page }) => {
+    await page.goto('/search/');
+    await page.keyboard.press('/');
+
+    await expect(
+      page.getByRole('searchbox', { name: '搜索文章' }),
+    ).toBeFocused();
+  });
+
   test('returns results after Pagefind is built', async ({ page }) => {
     await page.goto('/search/?q=内容集合');
     await page.waitForSelector('#search-status');
