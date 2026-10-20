@@ -153,8 +153,19 @@
   margin-block: 1.5em;
 }
 
+.prose .code-block::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 2.35rem;
+  inset-inline: 1px;
+  z-index: 1;
+  height: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+
 .prose .code-block pre {
-  padding-block-start: 2.75rem;
+  padding-block-start: 3rem;
 }
 
 .prose .code-lang {
@@ -293,6 +304,20 @@
   line-height: 1.6;
 }
 
+.prose sup a[data-footnote-ref] {
+  padding-inline: 0.15em;
+  font-family: var(--font-mono);
+  font-size: 0.75em;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.prose a[data-footnote-backref] {
+  margin-inline-start: 0.25em;
+  font-family: var(--font-mono);
+  text-decoration: none;
+}
+
 .prose .footnotes {
   margin-block-start: var(--space-7);
   padding-block-start: var(--space-5);
@@ -301,8 +326,28 @@
   font-size: var(--text-sm);
 }
 
+.prose .footnotes ol {
+  font-variant-numeric: tabular-nums;
+}
+
 .prose .footnotes > :first-child {
   margin-block-start: 0;
+}
+
+@media print {
+  .prose :where(h1, h2, h3, h4) {
+    break-after: avoid;
+  }
+
+  .prose :where(pre, blockquote, table, figure, img) {
+    break-inside: avoid;
+  }
+
+  .prose pre,
+  .prose pre code {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
