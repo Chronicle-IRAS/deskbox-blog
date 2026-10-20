@@ -762,6 +762,7 @@ Sitemap: http://localhost:4321/sitemap-index.xml
 - [agy 前端设计任务书](./plans/agy-frontend-design.md)
 - [P1 并行实施](./plans/p1-parallel.md)
 - [三智能体分工](./plans/three-agent-division.md)
+- [P3 上线准备](./plans/three-agent-p3.md)
 - [视觉与交互设计](./design.md)
 - [Git 工作流与提交规范](./git-workflow.md)
 - [设计系统](../design-system/deskbox-blog/MASTER.md)
