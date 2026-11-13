@@ -1,0 +1,60 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import PostForm from '../../../components/admin/PostForm.astro';
+import { getSession } from '../../../server/auth';
+import { getAdminPost, listTags } from '../../../server/posts';
+
+const session = getSession(Astro);
+
+if (!session) {
+  return Astro.redirect('/login/');
+}
+
+const { id } = Astro.params;
+const tags = listTags();
+const post = id ? getAdminPost(id) : undefined;
+
+if (!post) {
+  return Astro.redirect('/admin/?error=文章不存在');
+}
+
+const today = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Asia/Shanghai',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+}).format(new Date());
+---
+
+<AdminLayout title={`编辑：${post.title}`} csrfToken={session.csrfToken}>
+  <div class="admin-page-head">
+    <h1 class="admin-title">编辑文章</h1>
+    <a href={`/admin/preview/${post.id}/`}>预览</a>
+  </div>
+
+  <PostForm csrfToken={session.csrfToken} post={post} today={today} tags={tags} />
+</AdminLayout>
+
+<style>
+  .admin-page-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+  }
+
+  .admin-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    line-height: var(--leading-h1);
+  }
+
+  .admin-page-head a {
+    font-size: var(--text-sm);
+  }
+</style>

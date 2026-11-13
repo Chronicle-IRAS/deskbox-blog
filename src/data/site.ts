@@ -38,26 +38,32 @@ export interface GiscusConfig {
 export type CommentsConfig = { provider: 'none' } | GiscusConfig;
 
 export const site = {
-  name: 'DeskBox',
-  title: 'DeskBox',
+  name: 'Chronicle-IRAS的博客',
+  title: 'Chronicle-IRAS的博客',
   description: '写代码，也写生活。',
-  url: 'http://localhost:4321',
+  url: import.meta.env.PUBLIC_SITE_URL ?? 'http://localhost:4321',
   author: {
-    name: 'DeskBox',
-    bio: '{{一句话简介}}',
+    name: 'Chronicle-IRAS',
+    bio: 'Everything is AI',
+    avatar: '/avatar.jpg',
+    github: 'https://github.com/Chronicle-IRAS',
   },
   nav: [
     { label: '文章', href: '/blog/' },
+    { label: '系列', href: '/series/' },
     { label: '标签', href: '/tags/' },
     { label: '归档', href: '/archive/' },
     { label: '关于', href: '/about/' },
     { label: '搜索', href: '/search/' },
   ] satisfies NavItem[],
   social: [
-    { label: 'GitHub', href: 'https://github.com/', icon: 'github' },
-    { label: 'Email', href: 'mailto:hello@example.com', icon: 'mail' },
+    {
+      label: 'GitHub',
+      href: 'https://github.com/Chronicle-IRAS',
+      icon: 'github',
+    },
   ] satisfies SocialLink[],
-  footer: '© 2026 DeskBox',
+  footer: '© 2026 Chronicle-IRAS的博客',
   comments: {
     provider: 'giscus',
     repo: 'Chronicle-IRAS/deskbox-blog',

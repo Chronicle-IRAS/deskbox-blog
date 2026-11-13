@@ -1,24 +1,103 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import BlogIndexView from '../../components/BlogIndexView.astro';
-import { pageTitle, site } from '../../data/site';
-import { getPublishedPosts, toPostSummary } from '../../lib/posts';
-
-const PAGE_SIZE = 10;
-const allPosts = await getPublishedPosts();
-const posts = allPosts.slice(0, PAGE_SIZE).map(toPostSummary);
-const totalPages = Math.max(1, Math.ceil(allPosts.length / PAGE_SIZE));
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import PostRow from '../../components/PostRow.astro';
+import Preview from '../../components/Preview.astro';
+import { getPosts } from '../../lib/posts';
+import { cardData } from '../../lib/meta';
+import { getTags } from '../../config';
+const posts = await getPosts();
+const tags = getTags();
+const cards = await Promise.all(posts.map(cardData));
+const used = tags.filter((t) => cards.some((c) => c.tags.includes(t.name)));
 ---
-
-<BaseLayout
-  title={pageTitle('文章')}
-  description={site.description}
-  activeNav="blog"
->
-  <BlogIndexView
-    posts={posts}
-    total={allPosts.length}
-    page={1}
-    totalPages={totalPages}
-  />
-</BaseLayout>
+<Base title="文章" description="DeskBox 的全部文章：前端、后端、工程实践、阅读与生活。">
+  <PageHead eyebrow="全部文章" title="文章" count={cards.length} lead="按时间倒序。抽出一个文件夹标签来筛选，鼠标停在标题上可以先看一眼摘要。" />
+  <div class="wrap">
+    <div class="filter rise" style="--i:3" data-filter role="group" aria-label="按标签筛选">
+      <span class="filter__ind" data-filter-ind aria-hidden="true"></span>
+      <button type="button" data-tag="all" aria-pressed="true">全部</button>
+      {used.map((t) => <button type="button" data-tag={t.slug} aria-pressed="false">{t.name}</button>)}
+    </div>
+    <div class="sheet">
+      <ol class="rows">
+        {cards.map((p, i) => <PostRow p={p} index={i} />)}
+      </ol>
+      <p class="empty muted" data-filter-empty hidden>这个文件夹还是空的。</p>
+    </div>
+  </div>
+  <Preview />
+</Base>
+<style>
+  /* 文件夹标签：选中的那张和下面的纸连成一体 */
+  .filter {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    max-width: 100%;
+    padding: 0 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filter button {
+    position: relative;
+    flex: none;
+    height: 40px;
+    padding: 0 20px;
+    margin-bottom: -1px;
+    border: 1px solid var(--rule-2);
+    border-bottom: 0;
+    border-radius: 8px 8px 0 0;
+    background: var(--paper-2);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-2);
+    transition: height 0.25s var(--ease), color 0.2s, background 0.2s;
+  }
+  .filter button:hover {
+    height: 44px;
+    color: var(--ink);
+  }
+  .filter button[aria-pressed='true'] {
+    z-index: 2;
+    height: 46px;
+    background: var(--sheet);
+    color: var(--ink);
+    font-weight: 600;
+    border-color: var(--ink);
+  }
+  .filter__ind {
+    position: absolute;
+    top: auto;
+    bottom: 42px;
+    left: 0;
+    z-index: 3;
+    height: 3px;
+    background: var(--red);
+    border-radius: 3px 3px 0 0;
+    transition: transform 0.45s var(--spring), width 0.45s var(--spring);
+  }
+  .sheet {
+    position: relative;
+    z-index: 1;
+    padding: 4px clamp(14px, 3vw, 32px);
+    background: var(--sheet);
+    border: 1px solid var(--ink);
+    border-radius: 2px 6px 6px 6px;
+    box-shadow: 5px 5px 0 var(--paper-2), 5px 5px 0 1px var(--rule-2);
+  }
+  .rows {
+    padding: 0;
+  }
+  .rows :global(.row:first-child) {
+    border-top: 0;
+  }
+  .rows :global(.row:last-child) {
+    border-bottom: 0;
+  }
+  .empty {
+    padding: 60px 0;
+    text-align: center;
+  }
+</style>

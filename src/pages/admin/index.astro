@@ -1,0 +1,422 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getSession } from '../../server/auth';
+import { searchAdminPosts } from '../../server/posts';
+import type { AdminListQuery } from '../../server/types';
+
+const session = getSession(Astro);
+
+if (!session) {
+  return Astro.redirect('/login/');
+}
+
+const allowed = new Set(['all', 'draft', 'published', 'trash']);
+const statusParam = Astro.url.searchParams.get('status') ?? 'all';
+const status = (allowed.has(statusParam) ? statusParam : 'all') as NonNullable<AdminListQuery['status']>;
+const q = Astro.url.searchParams.get('q')?.trim() ?? '';
+const pageParam = Number(Astro.url.searchParams.get('page') ?? 1);
+const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
+const result = searchAdminPosts({ status, q, page, pageSize: 20 });
+const error = Astro.url.searchParams.get('error');
+
+const tabHref = (value: string) => {
+  const params = new URLSearchParams();
+  if (value !== 'all') params.set('status', value);
+  if (q) params.set('q', q);
+  return `/admin/${params.toString() ? `?${params}` : ''}`;
+};
+
+const pageHref = (value: number) => {
+  const params = new URLSearchParams();
+  if (status !== 'all') params.set('status', status);
+  if (q) params.set('q', q);
+  if (value > 1) params.set('page', String(value));
+  return `/admin/${params.toString() ? `?${params}` : ''}`;
+};
+
+const tabs = [
+  ['all', '全部'],
+  ['draft', '草稿'],
+  ['published', '已发布'],
+] as const;
+---
+
+<AdminLayout title="文章" csrfToken={session.csrfToken}>
+  <div class="admin-page-head">
+    <div>
+      <h1>文章</h1>
+      <p>{result.total} 篇</p>
+    </div>
+    <a class="admin-primary" href="/admin/posts/new/">新建文章</a>
+  </div>
+
+  {error && <p class="admin-error" role="alert">{error}</p>}
+
+  <div class="admin-tools">
+    <nav class="admin-tabs" aria-label="按状态筛选">
+      {tabs.map(([value, label]) => (
+        <a
+          href={tabHref(value)}
+          aria-current={status === value ? 'page' : undefined}
+        >
+          {label}
+        </a>
+      ))}
+      <a href="/admin/trash/" aria-current={status === 'trash' ? 'page' : undefined}>
+        回收站
+      </a>
+    </nav>
+
+    <form class="admin-search" method="get" action="/admin/" role="search">
+      {status !== 'all' && status !== 'trash' && (
+        <input type="hidden" name="status" value={status} />
+      )}
+      <label>
+        <span class="sr-only">搜索文章</span>
+        <input
+          id="admin-query"
+          name="q"
+          type="search"
+          value={q}
+          placeholder="搜索标题、slug 或摘要"
+        />
+      </label>
+      <button type="submit">搜索</button>
+      {q && <a href={tabHref(status)}>清除</a>}
+    </form>
+  </div>
+
+  {result.posts.length === 0 ? (
+    <p class="admin-empty">
+      {q ? '没有匹配的文章。' : status === 'trash' ? '回收站是空的。' : '还没有文章。'}
+    </p>
+  ) : (
+    <ul class="admin-post-list">
+      {result.posts.map((post) => (
+        <li class="admin-post">
+          <div class="admin-post__main">
+            <a class="admin-post__title" href={`/admin/posts/${post.id}/`}>
+              {post.title}
+            </a>
+            <p class="admin-post__meta">
+              <span
+                class:list={[
+                  'admin-status',
+                  post.draft ? 'admin-status--draft' : 'admin-status--published',
+                ]}
+              >
+                {post.draft ? '草稿' : '已发布'}
+              </span>
+              <span>{post.pubDate.slice(0, 10)}</span>
+              <span>更新于 {post.updatedAt.slice(0, 10)}</span>
+              {post.tags.length > 0 && (
+                <span>{post.tags.map((tag) => `#${tag}`).join(' ')}</span>
+              )}
+            </p>
+          </div>
+
+          <div class="admin-post__actions">
+            <a href={`/admin/posts/${post.id}/`}>编辑</a>
+            <a href={`/admin/preview/${post.id}/`}>预览</a>
+
+            <form method="post" action="/api/admin/posts/">
+              <input type="hidden" name="csrf" value={session.csrfToken} />
+              <input type="hidden" name="id" value={post.id} />
+              <input
+                type="hidden"
+                name="action"
+                value={post.draft ? 'publish' : 'unpublish'}
+              />
+              <button type="submit">{post.draft ? '发布' : '撤回'}</button>
+            </form>
+
+            <form
+              method="post"
+              action="/api/admin/posts/"
+              onsubmit="return confirm('确认删除这篇文章？')"
+            >
+              <input type="hidden" name="csrf" value={session.csrfToken} />
+              <input type="hidden" name="id" value={post.id} />
+              <input type="hidden" name="action" value="delete" />
+              <button type="submit" class="admin-danger">删除</button>
+            </form>
+          </div>
+        </li>
+      ))}
+    </ul>
+  )}
+
+  {result.totalPages > 1 && (
+    <nav class="admin-pagination" aria-label="文章分页">
+      {result.page > 1 ? (
+        <a href={pageHref(result.page - 1)}>上一页</a>
+      ) : (
+        <span aria-disabled="true">上一页</span>
+      )}
+      <span>
+        第 {result.page} / {result.totalPages} 页
+      </span>
+      {result.page < result.totalPages ? (
+        <a href={pageHref(result.page + 1)}>下一页</a>
+      ) : (
+        <span aria-disabled="true">下一页</span>
+      )}
+    </nav>
+  )}
+</AdminLayout>
+
+<style>
+  .admin-page-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block-end: var(--space-4);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .admin-page-head h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    line-height: var(--leading-h1);
+  }
+
+  .admin-page-head p {
+    margin: var(--space-1) 0 0;
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+
+  .admin-primary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--space-5);
+    color: var(--on-accent);
+    background: var(--accent-solid);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .admin-primary:hover {
+    background: var(--accent-solid-hover);
+  }
+
+  .admin-error {
+    margin: var(--space-4) 0;
+    padding: var(--space-3) var(--space-4);
+    color: var(--error);
+    background: var(--surface-muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+  .admin-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-block: var(--space-4);
+  }
+
+  .admin-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  .admin-tabs a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--space-3);
+    color: var(--fg-muted);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    text-decoration: none;
+  }
+
+  .admin-tabs a[aria-current="page"] {
+    color: var(--fg);
+    background: var(--surface-muted);
+    border-color: var(--border);
+  }
+
+  .admin-search {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .admin-search input {
+    min-height: 44px;
+    width: min(22rem, 60vw);
+    padding: 0 var(--space-3);
+    color: var(--fg);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    font: inherit;
+  }
+
+  .admin-search button {
+    min-height: 44px;
+    padding: 0 var(--space-4);
+    color: var(--fg);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .admin-search a {
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+
+  .admin-empty {
+    margin-top: var(--space-6);
+    padding: var(--space-7);
+    color: var(--fg-muted);
+    text-align: center;
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-md);
+  }
+
+  .admin-post-list {
+    margin: var(--space-4) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .admin-post {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-5);
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .admin-post__title {
+    color: var(--fg);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .admin-post__title:hover {
+    color: var(--accent);
+  }
+
+  .admin-post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+    margin: var(--space-2) 0 0;
+    color: var(--fg-muted);
+    font-size: var(--text-xs);
+  }
+
+  .admin-status {
+    padding: 1px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+  .admin-status--published {
+    color: var(--success);
+    border-color: var(--success);
+  }
+
+  .admin-status--draft {
+    color: var(--warning);
+    border-color: var(--warning);
+  }
+
+  .admin-post__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  .admin-post__actions a,
+  .admin-post__actions button {
+    color: var(--fg-muted);
+    font: inherit;
+    text-decoration: none;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .admin-post__actions a:hover,
+  .admin-post__actions button:hover {
+    color: var(--fg);
+  }
+
+  .admin-post__actions form {
+    margin: 0;
+  }
+
+  .admin-post__actions .admin-danger {
+    color: var(--error);
+  }
+
+  .admin-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    margin-block-start: var(--space-6);
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+
+  .admin-pagination a {
+    color: var(--fg-muted);
+    text-decoration: none;
+  }
+
+  .admin-pagination a:hover {
+    color: var(--accent);
+  }
+
+  @media (max-width: 639px) {
+    .admin-post__actions { width: 100%; gap: var(--space-2); }
+    .admin-post__actions a, .admin-post__actions button {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      padding-inline: var(--space-2);
+    }
+    .admin-post__actions form:last-child {
+      margin-inline-start: auto;
+      border-inline-start: 1px solid var(--border);
+      padding-inline-start: var(--space-2);
+    }
+
+    .admin-search input {
+      width: 100%;
+    }
+
+    .admin-search {
+      width: 100%;
+    }
+  }
+</style>

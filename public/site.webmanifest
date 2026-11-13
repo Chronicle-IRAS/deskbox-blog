@@ -1,0 +1,14 @@
+{
+  "name": "DeskBox",
+  "short_name": "DeskBox",
+  "description": "写代码，也写生活。",
+  "start_url": "/deskbox-blog/",
+  "scope": "/deskbox-blog/",
+  "display": "standalone",
+  "background_color": "#f4f1e9",
+  "theme_color": "#f4f1e9",
+  "icons": [
+    { "src": "/deskbox-blog/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/deskbox-blog/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

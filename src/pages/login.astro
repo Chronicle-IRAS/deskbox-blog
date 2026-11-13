@@ -1,0 +1,129 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../layouts/AdminLayout.astro';
+import { ensureCsrfCookie, getSession } from '../server/auth';
+
+const session = getSession(Astro);
+
+if (session) {
+  return Astro.redirect('/admin/');
+}
+
+const csrf = ensureCsrfCookie(Astro);
+const error = Astro.url.searchParams.get('error');
+---
+
+<AdminLayout title="登录" csrfToken={csrf} showLogout={false}>
+  <section class="login" aria-labelledby="login-title">
+    <h1 id="login-title">管理登录</h1>
+
+    {
+      error && (
+        <p class="login__error" role="alert">
+          {error === 'csrf'
+            ? '表单已过期，请重新提交。'
+            : '账号或密码错误。'}
+        </p>
+      )
+    }
+
+    <form class="login__form" method="post" action="/api/login/">
+      <input type="hidden" name="csrf" value={csrf} />
+      <label class="login__field">
+        <span>账号</span>
+        <input type="text" name="username" required autofocus autocomplete="username" />
+      </label>
+      <label class="login__field">
+        <span>密码</span>
+        <input
+          type="password"
+          name="password"
+          required
+          autocomplete="current-password"
+        />
+      </label>
+      <button class="login__submit" type="submit">登录</button>
+    </form>
+
+
+  </section>
+</AdminLayout>
+
+<style>
+  .login {
+    max-width: 28rem;
+    margin-inline: auto;
+    padding: var(--space-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  .login h1 {
+    margin: 0 0 var(--space-5);
+    font-family: var(--font-display);
+    font-size: var(--text-h2);
+    line-height: var(--leading-h2);
+  }
+
+  .login__error {
+    margin: 0 0 var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    color: var(--error);
+    background: var(--surface-muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+  }
+
+  .login__form {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .login__field {
+    display: grid;
+    gap: var(--space-2);
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+
+  .login__field input {
+    width: 100%;
+    min-height: 44px;
+    padding: 0 var(--space-3);
+    color: var(--fg);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+  }
+
+  .login__field input:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .login__submit {
+    min-height: 44px;
+    padding: 0 var(--space-5);
+    color: var(--on-accent);
+    background: var(--accent-solid);
+    border: 0;
+    border-radius: var(--radius-md);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .login__submit:hover {
+    background: var(--accent-solid-hover);
+  }
+
+  .login__hint {
+    margin: var(--space-5) 0 0;
+    color: var(--fg-muted);
+    font-size: var(--text-xs);
+    line-height: 1.6;
+  }
+</style>

@@ -1,0 +1,36 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import PostForm from '../../../components/admin/PostForm.astro';
+import { getSession } from '../../../server/auth';
+import { listTags } from '../../../server/posts';
+
+const session = getSession(Astro);
+const tags = listTags();
+
+if (!session) {
+  return Astro.redirect('/login/');
+}
+
+const today = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Asia/Shanghai',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+}).format(new Date());
+---
+
+<AdminLayout title="新建文章" csrfToken={session.csrfToken}>
+  <h1 class="admin-title">新建文章</h1>
+  <PostForm csrfToken={session.csrfToken} today={today} tags={tags} />
+</AdminLayout>
+
+<style>
+  .admin-title {
+    margin: 0 0 var(--space-6);
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    line-height: var(--leading-h1);
+  }
+</style>

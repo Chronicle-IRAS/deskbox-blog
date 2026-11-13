@@ -1,40 +1,16 @@
+
 import type { APIContext } from 'astro';
-import sharp from 'sharp';
-import { formatDate } from '../../lib/format';
-import { renderOgSvg } from '../../lib/og';
-import {
-  getPublishedPosts,
-  toPostSummary,
-  type BlogEntry,
-} from '../../lib/posts';
+import { getPosts, fmtDate } from '../../lib/posts';
+import { ogPng } from '../../lib/og';
+import { site } from '../../config';
 
-export async function getStaticPaths() {
-  const posts = await getPublishedPosts();
-
-  return posts.map((post) => ({
-    params: { slug: post.data.slug },
-    props: { post },
-  }));
-}
-
-export async function GET({ props }: APIContext) {
-  const { post } = props as { post: BlogEntry };
-  const summary = toPostSummary(post);
-
-  const svg = renderOgSvg({
-    title: post.data.title,
-    description: post.data.description,
-    date: formatDate(post.data.pubDate),
-    minutes: summary.readingMinutes,
-    tags: summary.tags,
+export async function GET({ params }: APIContext) {
+  const post = (await getPosts()).find((p) => p.data.slug === params.slug);
+  if (!post && params.slug !== 'default') return new Response('Not Found', { status: 404 });
+  const png = await ogPng({
+    title: post?.data.title ?? site.description,
+    kicker: post ? fmtDate(post.data.pubDate) : 'BLOG',
+    foot: post?.data.tags.join(' · ') ?? site.name,
   });
-
-  const png = await sharp(Buffer.from(svg)).png({ compressionLevel: 9 }).toBuffer();
-
-  return new Response(png, {
-    headers: {
-      'Content-Type': 'image/png',
-      'Cache-Control': 'public, max-age=31536000, immutable',
-    },
-  });
+  return new Response(new Uint8Array(png), { headers: { 'Content-Type': 'image/png' } });
 }

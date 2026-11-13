@@ -1,0 +1,577 @@
+---
+import type { AdminPost, TagSummary } from '../../server/types';
+import '../../styles/prose.css';
+
+interface Props {
+  csrfToken: string;
+  post?: AdminPost;
+  today: string;
+  tags?: TagSummary[];
+}
+
+const { csrfToken, post, today, tags = [] } = Astro.props;
+const published = post ? !post.draft : false;
+---
+
+<form
+  class="post-form"
+  method="post"
+  action="/api/admin/posts/"
+  enctype="multipart/form-data"
+  data-post-id={post?.id ?? ''}
+  data-version={post?.version ?? ''}
+>
+  <input type="hidden" name="csrf" value={csrfToken} />
+  {post && <input type="hidden" name="id" value={post.id} />}
+
+  <div id="editor-error" class="editor-error" role="alert" tabindex="-1" hidden></div>
+
+  <div class="editor-title-row">
+    <label class="editor-title">
+      <span class="sr-only">标题</span>
+      <input
+        name="title"
+        required
+        maxlength="80"
+        placeholder="文章标题"
+        value={post?.title ?? ''}
+      />
+    </label>
+    <div class="editor-actions">
+      <span id="editor-save-status" class="editor-save-status" aria-live="polite">
+        {post ? '已保存' : '尚未保存'}
+      </span>
+      <button class="button button--secondary" type="submit" name="action" value="save">
+        {published ? '保存修改' : '保存草稿'}
+      </button>
+      <button class="button button--primary" type="submit" name="action" value="publish">
+        发布
+      </button>
+      <a class="post-form__cancel" href="/admin/">返回</a>
+    </div>
+  </div>
+
+  <div class="editor-layout">
+    <section class="editor-main" aria-label="正文编辑">
+      <div id="draft-recovery" class="draft-recovery" hidden>
+        <p>检测到本地未提交的草稿备份。</p>
+        <div class="draft-recovery__actions">
+          <button type="button" id="draft-restore">恢复备份</button>
+          <button type="button" id="draft-discard">放弃备份</button>
+        </div>
+      </div>
+
+      <div id="conflict-recovery" class="draft-recovery" hidden>
+        <p>这篇文章已在另一处更新，当前版本未保存。</p>
+        <div class="draft-recovery__actions">
+          <button type="button" id="conflict-reload">重新加载服务器版本</button>
+          <button type="button" id="conflict-keep">保留本地内容</button>
+        </div>
+      </div>
+
+      <div class="md-toolbar" role="toolbar" aria-label="Markdown 工具栏">
+        <button type="button" data-md="h2" title="二级标题">H2</button>
+        <button type="button" data-md="h3" title="三级标题">H3</button>
+        <span class="md-toolbar__sep" aria-hidden="true"></span>
+        <button type="button" data-md="bold" title="粗体"><strong>B</strong></button>
+        <button type="button" data-md="italic" title="斜体"><em>I</em></button>
+        <button type="button" data-md="link" title="链接">链接</button>
+        <button type="button" data-md="inline-code" title="行内代码">&lt;/&gt;</button>
+        <button type="button" data-md="code-block" title="代码块">代码块</button>
+        <span class="md-toolbar__sep" aria-hidden="true"></span>
+        <button type="button" data-md="quote" title="引用">引用</button>
+        <button type="button" data-md="ul" title="无序列表">• 列表</button>
+        <button type="button" data-md="ol" title="有序列表">1. 列表</button>
+        <button type="button" data-md="table" title="表格">表格</button>
+        <button type="button" data-md="footnote" title="脚注">脚注</button>
+        <button type="button" data-md="hr" title="分割线">—</button>
+      </div>
+
+      <label class="editor-body">
+        <span class="sr-only">正文（Markdown）</span>
+        <textarea
+          id="body-md"
+          class="post-form__body"
+          name="bodyMd"
+          rows="26"
+          required
+          spellcheck="false"
+          placeholder="用 Markdown 写正文。支持标题、代码块、表格、脚注和图片。"
+        >{post?.bodyMd ?? ''}</textarea>
+      </label>
+
+      <div class="editor-foot">
+        <span id="editor-stats">0 字 · 约 1 分钟</span>
+        <label class="editor-inline-upload">
+          <span>插入正文图片</span>
+          <input
+            id="body-image"
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+          />
+        </label>
+        <small id="body-image-status" aria-live="polite">
+          PNG / JPEG / WebP，最大 5 MB
+        </small>
+      </div>
+    </section>
+
+    <aside class="editor-side" aria-label="文章设置与预览">
+      <div class="editor-side-tabs" role="tablist" aria-label="侧栏面板">
+        <button type="button" role="tab" id="tab-settings" aria-selected="true" aria-controls="panel-settings" tabindex="0">设置</button>
+        <button type="button" role="tab" id="tab-preview" aria-selected="false" aria-controls="panel-preview" tabindex="-1">预览</button>
+      </div>
+
+      <div id="panel-settings" role="tabpanel" aria-labelledby="tab-settings">
+
+      <label class="post-form__field">
+        <span>slug</span>
+        <input
+          name="slug"
+          required
+          pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+          value={post?.slug ?? ''}
+          readonly={published}
+          placeholder="my-first-post"
+        />
+        {published && <small>发布后 slug 不可修改。</small>}
+      </label>
+
+      <label class="post-form__field">
+        <span>发布日期</span>
+        <input name="pubDate" type="date" required value={post?.pubDate.slice(0, 10) ?? today} />
+      </label>
+
+      <label class="post-form__field">
+        <span>摘要（20–160 字）</span>
+        <textarea name="description" required minlength="20" maxlength="160" rows="4">{post?.description ?? ''}</textarea>
+      </label>
+
+      <label class="post-form__field">
+        <span>标签（逗号分隔，最多 3 个）</span>
+        <input
+          name="tags"
+          list="tag-options"
+          value={post?.tags.join(', ') ?? ''}
+          placeholder="前端, 工程实践"
+        />
+        <datalist id="tag-options">
+          {tags.map((tag) => <option value={tag.name} />)}
+        </datalist>
+      </label>
+
+      <div class="editor-series">
+        <label class="post-form__field">
+          <span>系列名称（可选）</span>
+          <input name="seriesName" value={post?.series?.name ?? ''} />
+        </label>
+        <label class="post-form__field">
+          <span>系列顺序（可选）</span>
+          <input
+            name="seriesOrder"
+            type="number"
+            min="1"
+            step="1"
+            value={post?.series?.order ?? ''}
+          />
+        </label>
+      </div>
+
+      <label class="post-form__field">
+        <span>封面图（可选）</span>
+        <input name="cover" type="file" accept="image/png,image/jpeg,image/webp" />
+        {post?.coverPath && (
+          <img class="post-form__cover" src={post.coverPath} alt="" />
+        )}
+        <small>PNG / JPEG / WebP，最大 5 MB；会自动转为 WebP。</small>
+      </label>
+
+      <label class="post-form__field">
+        <span>封面说明（有封面时必填）</span>
+        <input name="coverAlt" maxlength="120" value={post?.coverAlt ?? ''} />
+      </label>
+      </div>
+
+      <div id="panel-preview" role="tabpanel" aria-labelledby="tab-preview" hidden>
+        <p id="preview-status" class="preview-status" aria-live="polite">
+          输入正文后自动预览。
+        </p>
+        <div id="preview-content" class="preview-prose prose"></div>
+      </div>
+    </aside>
+  </div>
+</form>
+
+<style>
+  .post-form {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .editor-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    padding-block-end: var(--space-4);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .editor-title {
+    flex: 1 1 24rem;
+    min-width: 0;
+  }
+
+  .editor-title input {
+    width: 100%;
+    padding: 6px 0;
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-size: var(--text-h2);
+    font-weight: 600;
+    line-height: var(--leading-h2);
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid transparent;
+  }
+
+  .editor-title input:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 4px;
+    border-bottom-color: var(--accent);
+  }
+
+  .editor-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .editor-save-status {
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+
+  .editor-save-status[data-state="dirty"] {
+    color: var(--warning);
+  }
+
+  .editor-save-status[data-state="error"] {
+    color: var(--error);
+  }
+
+  .editor-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .editor-main {
+    min-width: 0;
+  }
+
+  .editor-side {
+    position: sticky;
+    top: 84px;
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  .editor-side h2 {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  .post-form__field {
+    display: grid;
+    gap: var(--space-2);
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+
+  .post-form__field input,
+  .post-form__field textarea {
+    width: 100%;
+    padding: 10px 12px;
+    color: var(--fg);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    font: inherit;
+  }
+
+  .post-form__field input:focus-visible,
+  .post-form__field textarea:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .post-form__field small {
+    color: var(--fg-muted);
+    font-size: var(--text-xs);
+  }
+
+  .editor-series {
+    display: grid;
+    grid-template-columns: 1fr 6rem;
+    gap: var(--space-3);
+  }
+
+  .md-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-2);
+    background: var(--surface-muted);
+    border: 1px solid var(--border);
+    border-bottom: 0;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+  }
+
+  .md-toolbar button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 0 var(--space-2);
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  .md-toolbar button:hover,
+  .md-toolbar button:focus-visible {
+    color: var(--fg);
+    background: var(--surface);
+    border-color: var(--border-strong);
+    outline: none;
+  }
+
+  .md-toolbar__sep {
+    width: 1px;
+    height: 20px;
+    margin-inline: var(--space-1);
+    background: var(--border);
+  }
+
+  .editor-body {
+    display: block;
+  }
+
+  .post-form__body {
+    width: 100%;
+    min-height: 36rem;
+    padding: var(--space-4);
+    color: var(--fg);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: 1.8;
+    resize: vertical;
+    tab-size: 2;
+  }
+
+  .post-form__body:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .editor-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    margin-block-start: var(--space-2);
+    color: var(--fg-muted);
+    font-size: var(--text-xs);
+  }
+
+  .editor-inline-upload {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    cursor: pointer;
+  }
+
+  .editor-inline-upload input {
+    max-width: 12rem;
+    font-size: var(--text-xs);
+  }
+
+  .draft-recovery {
+    margin-block-end: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    color: var(--warning);
+    background: var(--surface-muted);
+    border: 1px solid var(--warning);
+    border-radius: var(--radius-sm);
+  }
+
+  .draft-recovery p {
+    margin: 0;
+  }
+
+  .draft-recovery__actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-block-start: var(--space-2);
+  }
+
+  .draft-recovery button {
+    padding: 4px 8px;
+    color: var(--fg);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .post-form__cover {
+    width: min(100%, 320px);
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  .post-form__cancel {
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 var(--space-5);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .button--primary {
+    color: var(--on-accent);
+    background: var(--accent-solid);
+    border: 1px solid transparent;
+  }
+
+  .button--primary:hover {
+    background: var(--accent-solid-hover);
+  }
+
+  .button--secondary {
+    color: var(--fg);
+    background: transparent;
+    border: 1px solid var(--border-strong);
+  }
+
+  .button--secondary:hover {
+    background: var(--surface-muted);
+  }
+
+  .editor-error {
+    padding: var(--space-3) var(--space-4);
+    color: var(--error);
+    background: var(--surface-muted);
+    border: 1px solid var(--error);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+  }
+
+  .editor-side-tabs {
+    display: flex;
+    gap: var(--space-1);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .editor-side-tabs button {
+    min-height: 36px;
+    padding: 0 var(--space-3);
+    color: var(--fg-muted);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    font: inherit;
+    font-size: var(--text-sm);
+    cursor: pointer;
+  }
+
+  .editor-side-tabs button[aria-selected="true"] {
+    color: var(--fg);
+    background: var(--surface-muted);
+    border-color: var(--border);
+  }
+
+  .preview-status {
+    margin: 0 0 var(--space-3);
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+
+  .preview-status[data-state="error"] {
+    color: var(--error);
+  }
+
+  .preview-prose {
+    max-height: 70vh;
+    overflow: auto;
+    padding-inline-end: var(--space-2);
+  }
+
+  .preview-prose :global(h2),
+  .preview-prose :global(h3) {
+    margin-top: var(--space-5);
+  }
+
+  @media (max-width: 899px) {
+    .editor-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .editor-side {
+      position: static;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .editor-series {
+      grid-template-columns: 1fr;
+    }
+
+    .editor-title-row {
+      align-items: flex-start;
+    }
+
+    .editor-actions {
+      width: 100%;
+    }
+
+    .editor-actions .button {
+      flex: 1;
+    }
+  }
+</style>

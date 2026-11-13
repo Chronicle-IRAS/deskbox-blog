@@ -1,0 +1,108 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { getSession } from '../../../server/auth';
+import { getAdminPost } from '../../../server/posts';
+import '../../../styles/prose.css';
+
+const session = getSession(Astro);
+
+if (!session) {
+  return Astro.redirect('/login/');
+}
+
+const { id } = Astro.params;
+const post = id ? getAdminPost(id) : undefined;
+
+if (!post) {
+  return Astro.redirect('/admin/?error=文章不存在');
+}
+---
+
+<AdminLayout title={`预览：${post.title}`} csrfToken={session.csrfToken}>
+  <div class="preview-head">
+    <p class="preview-banner">
+      预览 · {post.draft ? '草稿' : '已发布'} · 未进入公开列表
+    </p>
+    <div class="preview-actions">
+      <a href={`/admin/posts/${post.id}/`}>继续编辑</a>
+      <a href="/admin/">返回列表</a>
+    </div>
+  </div>
+
+  <article class="preview-article">
+    <header>
+      <h1>{post.title}</h1>
+      <p class="preview-meta">
+        <time datetime={post.pubDate.slice(0, 10)}>{post.pubDate.slice(0, 10)}</time>
+        <span>约 {post.readingMinutes} 分钟</span>
+        {post.tags.length > 0 && (
+          <span>{post.tags.map((tag) => `#${tag}`).join(' ')}</span>
+        )}
+      </p>
+      {post.description && <p class="preview-description">{post.description}</p>}
+    </header>
+
+    <div class="prose">
+      <Fragment set:html={post.html} />
+    </div>
+  </article>
+</AdminLayout>
+
+<style>
+  .preview-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+  }
+
+  .preview-banner {
+    margin: 0;
+    padding: var(--space-2) var(--space-3);
+    color: var(--warning);
+    font-size: var(--text-sm);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+  .preview-actions {
+    display: flex;
+    gap: var(--space-4);
+    font-size: var(--text-sm);
+  }
+
+  .preview-article {
+    max-width: var(--measure);
+    margin-inline: auto;
+  }
+
+  .preview-article h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    line-height: var(--leading-h1);
+  }
+
+  .preview-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+    margin: var(--space-3) 0 0;
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+  }
+
+  .preview-description {
+    margin: var(--space-4) 0 0;
+    color: var(--fg-muted);
+    font-size: var(--text-lg);
+  }
+
+  .prose {
+    margin-block-start: var(--space-6);
+  }
+</style>

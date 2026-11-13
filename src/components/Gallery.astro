@@ -1,0 +1,15 @@
+---
+/**
+ * 多图：<Gallery cols={2}>…<Figure/>…</Gallery>
+ * cols=2 左右并排；3 / 4 为网格（手机上自动变成两列）
+ * ratio="4/3" 时统一裁成同样比例（点开大图仍是完整原图）
+ */
+interface Props { cols?: 2 | 3 | 4; ratio?: string; caption?: string }
+const { cols = 2, ratio, caption } = Astro.props;
+---
+<figure class="gallery-wrap">
+  <div class="gallery" data-cols={cols} data-ratio={ratio ? '' : undefined} style={ratio ? `--ratio:${ratio}` : undefined}>
+    <slot />
+  </div>
+  {caption && <figcaption class="gallery__cap">{caption}</figcaption>}
+</figure>

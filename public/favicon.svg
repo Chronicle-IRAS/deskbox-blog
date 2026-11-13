@@ -1,17 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <style>
-    .bg { fill: #09090b; }
-    .border { stroke: #27272a; }
-    .glyph { fill: #fafafa; }
-    .accent { fill: #ec4899; }
-    @media (prefers-color-scheme: light) {
-      .bg { fill: #fafafa; }
-      .border { stroke: #d4d4d8; }
-      .glyph { fill: #09090b; }
-      .accent { fill: #be185d; }
-    }
-  </style>
-  <rect class="bg border" x="0.5" y="0.5" width="31" height="31" rx="6" stroke-width="1"/>
-  <rect class="accent" x="1" y="1" width="30" height="3" rx="1.5"/>
-  <path class="glyph" d="M8.5 9.5h6.6c5.1 0 8.4 3.1 8.4 7.8s-3.3 7.7-8.4 7.7H8.5v-15.5Zm6.2 12.3c3 0 4.9-1.8 4.9-4.5s-1.9-4.6-4.9-4.6h-2.5v9.1h2.5Z"/>
+  <rect x="1" y="1" width="30" height="30" rx="4" fill="#161513"/>
+  <text x="5.5" y="25" font-family="Fraunces, Georgia, serif" font-weight="700" font-size="24" fill="#f4f1e9">D</text>
+  <circle cx="25" cy="22.5" r="3" fill="#ff6b4f"/>
 </svg>

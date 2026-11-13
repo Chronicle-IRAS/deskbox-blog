@@ -1,37 +1,39 @@
 import { defineConfig } from 'astro/config';
+import node from '@astrojs/node';
 import mdx from '@astrojs/mdx';
-import sitemap from '@astrojs/sitemap';
+
 import remarkGfm from 'remark-gfm';
+import { rehypeHeadingAnchors, rehypeCodeFrame, rehypeExternalLinks, rehypeTableWrap, rehypeFigures } from './src/lib/rehype.mjs';
 
-function includeInSitemap(page) {
-  const { pathname } = new URL(page);
-
-  return !(
-    pathname === '/404/' ||
-    pathname === '/404.html' ||
-    pathname.startsWith('/search/') ||
-    pathname.startsWith('/styleguide/') ||
-    pathname.startsWith('/blog/page/') ||
-    pathname.endsWith('.xml') ||
-    pathname.endsWith('.txt')
-  );
-}
+// Production uses the existing Node service behind Nginx.
+const SITE = 'https://blog.chronicleiras.top';
+const BASE = '';
 
 export default defineConfig({
-  site: 'http://localhost:4321',
-  server: { host: '127.0.0.1' },
+  output: 'server',
+  adapter: node({ mode: 'standalone' }),
+  site: SITE,
+  base: BASE,
   trailingSlash: 'always',
-  build: {
-    format: 'directory',
-    inlineStylesheets: 'always',
+  build: { format: 'directory', inlineStylesheets: 'always' },
+  prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
+  image: {
+    // Markdown 里的本地图片也输出响应式 srcset + sizes（宽高写死，不会布局跳动）
+    layout: 'constrained',
+    responsiveStyles: false,
+    breakpoints: [360, 540, 720, 1080, 1440],
   },
-  integrations: [mdx(), sitemap({ filter: includeInSitemap })],
+  integrations: [
+    mdx(),
+
+  ],
   markdown: {
     remarkPlugins: [remarkGfm],
+    rehypePlugins: [rehypeHeadingAnchors, rehypeCodeFrame, rehypeExternalLinks, rehypeTableWrap, rehypeFigures],
     shikiConfig: {
-      themes: { light: 'github-light', dark: 'github-dark' },
+      themes: { light: 'github-light-high-contrast', dark: 'vesper' },
       defaultColor: false,
-      wrap: true,
+      wrap: false,
     },
   },
 });
