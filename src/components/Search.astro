@@ -5,9 +5,9 @@ import { getTags } from '../config';
 import Icon from './Icon.astro';
 const posts = await getPosts();
 const tags = getTags();
-const index = posts.map((p) => ({ t: p.data.title, d: p.data.description, u: postUrl(p.data.slug), date: fmtDate(p.data.pubDate), tags: p.data.tags, body: p.body ?? '' }));
+const index = posts.slice(0, 5).map((p) => ({ t: p.data.title, d: p.data.description, u: postUrl(p.data.slug), date: fmtDate(p.data.pubDate), tags: p.data.tags }));
 ---
-<dialog class="sp" data-search aria-label="搜索文章">
+<dialog class="sp" data-search data-search-src={url('/api/search-index/')} aria-label="搜索文章">
   <div class="sp__panel" data-search-panel>
     <div class="sp__head">
       <span class="sp__label">检索</span>

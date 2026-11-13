@@ -17,7 +17,23 @@ export function initSearch() {
   const list = $('[data-search-list]', dlg)!;
   const status = $('[data-search-status]', dlg)!;
   const tagsBox = $('[data-search-tags]', dlg)!;
-  const index: Item[] = JSON.parse($('[data-search-index]', dlg)?.textContent || '[]');
+  let index: Item[] = JSON.parse($('[data-search-index]', dlg)?.textContent || '[]');
+  let loaded = false;
+  let pending: Promise<void> | undefined;
+  const load = () => {
+    if (loaded) return Promise.resolve();
+    if (!pending) {
+      pending = fetch(dlg.dataset.searchSrc!, { headers: { Accept: 'application/json' } })
+        .then(async (response) => {
+          if (!response.ok) throw new Error('Search index unavailable');
+          const data: Item[] = await response.json();
+          index = data;
+          loaded = true;
+        })
+        .finally(() => { pending = undefined; });
+    }
+    return pending;
+  };
   let sel = 0;
   let seq = 0;
 
@@ -38,7 +54,11 @@ export function initSearch() {
     if (!q) return empty();
     tagsBox.hidden = true;
     status.innerHTML = '<span class="tw">检索中……</span>';
-    if (my !== seq) return;
+    try { await load(); } catch {
+      if (my === seq) status.textContent = '搜索暂时不可用，请稍后重试';
+      return;
+    }
+    if (my !== seq || !dlg.open) return;
     const lq = q.toLowerCase();
     const results = index.filter((x) => (x.t + x.d + (x.tags || []).join(' ') + (x.body || '')).toLowerCase().includes(lq));
     status.textContent = results.length ? results.length + ' 篇相关' : '没有找到，换个词试试';
@@ -61,16 +81,24 @@ export function initSearch() {
       if (a) { e.preventDefault(); dlg.close(); a.click(); }
     }
   };
+  dlg.addEventListener('close', () => { ++seq; });
   dlg.onclick = (e) => {
     if (e.target === dlg) dlg.close();
     if ((e.target as Element).closest('a')) dlg.close();
   };
   const open = () => {
     if (dlg.open) return;
+    ++seq;
     dlg.showModal();
     empty();
     input.value = '';
     input.focus();
+    // Recent titles are available immediately; full text stays off the critical path.
+    void load().then(() => {
+      if (dlg.open && !input.value.trim()) empty();
+    }).catch(() => {
+      if (dlg.open && !input.value.trim()) status.textContent = '搜索暂时不可用，请稍后重试';
+    });
 
   };
   $$('[data-search-open]').forEach((b) => (b.onclick = open));

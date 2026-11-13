@@ -161,7 +161,7 @@ node dist/server/entry.mjs
 
 生产通过现有 Nginx + systemd 运行 Node SSR，不使用 GitHub Pages 发布。每次发布创建新 release，备份数据库和 Nginx 配置，验证候选服务后切换 `current`。服务器专用路径、备份位置及回滚记录只保存在服务器运维文档。认证变量仅在服务器受限环境文件和本地忽略目录中保存。HTML 的脚本 nonce CSP 由应用生成，Nginx 不应叠加旧的静态脚本 hash CSP。
 
-搜索直接读取当前已发布文章，后台发布后刷新即可搜索，无需重新构建静态 Pagefind 索引。每个文档独立初始化交互，以支持逐响应 nonce 安全策略。仓库字体已自托管，普通构建无需 Python；`npm run fonts` 仅用于更新字体。
+搜索面板初始只带最近五篇的标题摘要；打开搜索后才请求 `/api/search-index/` 获取已发布文章全文，同一文档内复用请求。接口禁止持久缓存，后台发布后刷新即可搜索，无需重新构建静态 Pagefind 索引。公共样式提取为带内容哈希的 CSS，首屏入场由 CSS 启动；部署时由 Nginx 直接提供 `/fonts/`，缓存一天并支持条件请求，HTML 和认证相关响应继续禁止缓存。每个文档独立初始化交互，以支持逐响应 nonce 安全策略。仓库字体已自托管，普通构建无需 Python；`npm run fonts` 仅用于更新字体。
 
 ## 目录
 

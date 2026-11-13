@@ -15,7 +15,7 @@ export default defineConfig({
   site: SITE,
   base: BASE,
   trailingSlash: 'always',
-  build: { format: 'directory', inlineStylesheets: 'always' },
+  build: { format: 'directory', inlineStylesheets: 'auto' },
   prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
   image: {
     // Markdown 里的本地图片也输出响应式 srcset + sizes（宽高写死，不会布局跳动）

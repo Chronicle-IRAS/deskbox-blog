@@ -364,6 +364,18 @@ a.tag:hover::before {
     opacity: 1;
     transform: none;
   }
+  /* Above-the-fold content starts with CSS, without waiting for module download. */
+  .js .mast .rise {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: mast-enter 0.7s var(--ease) both;
+    animation-delay: calc(var(--i, 0) * 50ms);
+  }
+  @keyframes mast-enter {
+    from { opacity: 0.18; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
   html:not(.js) .rise {
     opacity: 1;
     transform: none;
