@@ -1,10 +1,9 @@
 export const prerender = false;
 
 import type { APIContext } from 'astro';
-import { site } from '../data/site';
 
-export function GET(_context: APIContext): Response {
-  const base = site.url.replace(/\/$/, '');
+export function GET(context: APIContext): Response {
+  const base = context.site!.href.replace(/\/$/, '');
   const body = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>

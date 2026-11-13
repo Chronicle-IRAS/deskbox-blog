@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import PostRow from '../../components/PostRow.astro';
+import Preview from '../../components/Preview.astro';
+import { getPosts } from '../../lib/posts';
+import { cardData } from '../../lib/meta';
+const name = Astro.params.name;
+const posts = (await getPosts()).filter((post) => post.data.series?.name === name)
+  .sort((a, b) => a.data.series!.order - b.data.series!.order);
+if (!posts.length) return new Response('专栏不存在', { status: 404 });
+const cards = await Promise.all(posts.map(cardData));
+---
+<Base title={name}>
+  <PageHead eyebrow="专栏" title={name!} count={cards.length} lead="按专栏顺序阅读。" />
+  <ol class="wrap rows">{cards.map((post, index) => <PostRow p={post} index={index} />)}</ol>
+  <Preview />
+</Base>

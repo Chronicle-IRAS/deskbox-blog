@@ -17,9 +17,7 @@ const posts = await getPosts();
     </noscript>
   </div>
   <script>
-    document.addEventListener('astro:page-load', () => {
-      if (location.pathname.endsWith('/search/')) setTimeout(() => document.querySelector<HTMLElement>('.s__box')?.click(), 350);
-    });
+    setTimeout(() => document.querySelector<HTMLElement>('.s__box')?.click(), 350);
   </script>
 </Base>
 <style>

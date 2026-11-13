@@ -1,0 +1,13 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import { getPosts } from '../../lib/posts';
+const posts = await getPosts();
+const names = [...new Set(posts.flatMap((post) => post.data.series ? [post.data.series.name] : []))];
+---
+<Base title="专栏">
+  <PageHead eyebrow="连续写作" title="专栏" count={names.length} lead="把同一个主题慢慢写清楚。" />
+  <ul class="wrap rows">
+    {names.map((name) => <li><a class="link-arrow" href={`/series/${encodeURIComponent(name)}/`}>{name} →</a></li>)}
+  </ul>
+</Base>

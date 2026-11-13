@@ -48,7 +48,7 @@ export async function getPosts(): Promise<Post[]> {
       id: p.id, collection: 'blog', body: getAdminPost(p.id)?.bodyMd ?? '',
       data: { slug: p.slug, title: p.title, description: p.description, pubDate: new Date(p.pubDate),
         updatedDate: p.updatedDate ? new Date(p.updatedDate) : undefined, tags: p.tags,
-        series: p.series, draft: false, lang: 'zh-CN', coverAlt: p.coverAlt },
+        series: p.series, draft: false, lang: 'zh-CN', coverAlt: p.coverAlt, canonical: getAdminPost(p.id)?.canonical },
       runtime: { html: p.html, headings: p.headings, coverPath: p.coverPath },
     }));
   }

@@ -1,12 +1,8 @@
 export const prerender = false;
 
 import type { APIContext } from 'astro';
-import { site } from '../data/site';
-import {
-  listAllPublishedPosts,
-  listSeries,
-  listTags,
-} from '../server/posts';
+import { getPosts } from '../lib/posts';
+import { getTags } from '../config';
 
 function escapeXml(value: string): string {
   return value
@@ -17,8 +13,9 @@ function escapeXml(value: string): string {
     .replaceAll("'", '&apos;');
 }
 
-export function GET(_context: APIContext): Response {
-  const base = site.url.replace(/\/$/, '');
+export async function GET(context: APIContext): Promise<Response> {
+  const base = context.site!.href.replace(/\/$/, '');
+  const posts = await getPosts();
   const paths = new Set<string>([
     '/',
     '/blog/',
@@ -28,16 +25,16 @@ export function GET(_context: APIContext): Response {
     '/about/',
   ]);
 
-  for (const post of listAllPublishedPosts()) {
-    paths.add(`/blog/${post.slug}/`);
+  for (const post of posts) {
+    paths.add(`/blog/${post.data.slug}/`);
   }
 
-  for (const tag of listTags()) {
-    if (tag.count > 0) paths.add(`/tags/${tag.slug}/`);
+  for (const tag of getTags()) {
+    if (posts.some((post) => post.data.tags.includes(tag.name))) paths.add(`/tags/${tag.slug}/`);
   }
 
-  for (const series of listSeries()) {
-    paths.add(`/series/${encodeURIComponent(series.name)}/`);
+  for (const name of new Set(posts.flatMap((post) => post.data.series ? [post.data.series.name] : []))) {
+    paths.add(`/series/${encodeURIComponent(name)}/`);
   }
 
   const urls = [...paths]
