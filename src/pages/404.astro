@@ -1,117 +1,87 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { pageTitle } from '../data/site';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { url } from '../lib/url';
 ---
-
-<BaseLayout
-  title={pageTitle('404')}
-  description="页面不存在"
-  noindex
->
-  <section class="not-found">
-    <p class="not-found__code" aria-hidden="true">404</p>
-    <h1>这一页没有内容。</h1>
-    <p class="not-found__text">链接可能已经失效，或者文章被移动了。</p>
-
-    <div class="not-found__actions">
-      <a class="not-found__action not-found__action--primary" href="/">
-        返回首页
-      </a>
-      <a class="not-found__action" href="/blog/">浏览文章</a>
-      <a class="not-found__action" href="/search/">搜索</a>
+<Base title="404 · 这页不在桌上" description="页面不存在。" noindex>
+  <section class="nf wrap">
+    <p class="kicker nf__k">错误 · 404</p>
+    <div class="nf__row">
+      <h1 class="nf__code display" aria-label="404">
+        <span aria-hidden="true">4</span><span class="nf__o" aria-hidden="true">0<svg viewBox="0 0 200 200" aria-hidden="true"><path d="M100 18c46 0 82 35 82 80 0 47-36 84-84 84-45 0-80-36-80-82 0-44 36-80 80-81" /><path d="M150 40c12 10 20 22 24 38" /></svg></span><span aria-hidden="true">4</span>
+      </h1>
+      <div class="nf__note">
+        <p class="nf__t display">这页不在桌上。</p>
+        <p class="nf__d muted">可能被收进了抽屉，或者链接抄错了一位。桌上只留下一圈咖啡渍。</p>
+        <div class="nf__cta">
+          <a class="btn" href={url('/')}>回到首页 <Icon name="right" /></a>
+          <button class="btn btn--paper" type="button" data-search-open><Icon name="search" /> 搜索文章</button>
+        </div>
+      </div>
     </div>
   </section>
-</BaseLayout>
-
+</Base>
 <style>
-  .not-found {
-    max-width: calc(var(--measure) + 2 * var(--gutter));
-    margin-inline: auto;
-    padding-block-start: clamp(3rem, 8vw, 6rem);
-    padding-block-end: var(--space-6);
-    padding-inline: var(--gutter);
+  .nf {
+    padding-top: clamp(16px, 4vw, 40px);
   }
-
-  .not-found__code {
-    margin: 0;
-    color: var(--accent);
-    font-family: var(--font-display);
-    font-size: clamp(3.5rem, 12vw, 6.5rem);
-    font-weight: 600;
-    line-height: 1;
-    letter-spacing: -0.03em;
+  .nf__k {
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--ink);
   }
-
-  .not-found h1 {
-    margin: var(--space-4) 0 0;
-    font-family: var(--font-display);
-    font-size: var(--text-h1);
-    font-weight: 600;
-    line-height: 1.1;
-    text-wrap: balance;
+  .nf__row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 420px);
+    align-items: end;
+    gap: clamp(24px, 5vw, 72px);
+    margin-top: clamp(24px, 4vw, 48px);
   }
-
-  .not-found__text {
-    max-width: 36ch;
-    margin: var(--space-3) 0 0;
-    color: var(--fg-muted);
-    font-size: var(--text-base);
-    line-height: var(--leading-base);
+  .nf__code {
+    font-size: clamp(130px, 24vw, 320px);
+    line-height: 0.82;
+    letter-spacing: -0.06em;
+    font-weight: 700;
   }
-
-  .not-found__actions {
+  .nf__o {
+    position: relative;
+    display: inline-block;
+    color: transparent;
+  }
+  /* 0 是一圈咖啡渍 */
+  .nf__o svg {
+    position: absolute;
+    left: -6%;
+    top: 4%;
+    width: 112%;
+    overflow: visible;
+    rotate: -12deg;
+  }
+  .nf__o path {
+    fill: none;
+    stroke: #8a5a2b;
+    stroke-width: 12;
+    stroke-linecap: round;
+    opacity: 0.55;
+  }
+  .nf__o path + path {
+    stroke-width: 5;
+    opacity: 0.35;
+  }
+  .nf__t {
+    font-size: clamp(28px, 3vw, 40px);
+  }
+  .nf__d {
+    margin-top: 10px;
+  }
+  .nf__cta {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-block-start: var(--space-6);
-    padding-block-start: var(--space-5);
-    border-top: 1px solid var(--border);
+    gap: 16px;
+    margin-top: 28px;
   }
-
-  .not-found__action {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    padding: 0 var(--space-5);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-md);
-    color: var(--fg);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    text-decoration: none;
-    transition:
-      background-color var(--duration-fast) var(--ease-out),
-      border-color var(--duration-fast) var(--ease-out),
-      color var(--duration-fast) var(--ease-out);
-  }
-
-  .not-found__action:hover {
-    background: var(--surface-muted);
-    border-color: var(--fg);
-    color: var(--fg);
-  }
-
-  .not-found__action:focus-visible {
-    outline: 2px solid var(--focus);
-    outline-offset: 2px;
-  }
-
-  .not-found__action--primary {
-    border-color: var(--accent-solid);
-    background: var(--accent-solid);
-    color: var(--on-accent);
-  }
-
-  .not-found__action--primary:hover {
-    border-color: var(--accent-solid-hover);
-    background: var(--accent-solid-hover);
-    color: var(--on-accent);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .not-found__action {
-      transition: none;
+  @media (max-width: 760px) {
+    .nf__row {
+      grid-template-columns: 1fr;
     }
   }
 </style>

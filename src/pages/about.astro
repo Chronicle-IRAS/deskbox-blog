@@ -1,87 +1,237 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import { pageTitle, site } from '../data/site';
-import '../styles/prose.css';
+import { site } from '../config';
+import { url } from '../lib/url';
+import { getStats, fmtDate } from '../lib/posts';
+const s = await getStats();
 ---
+<Base title="关于" description={`关于 ${site.name}：${site.description}`}>
+  <section class="about wrap">
+    <p class="kicker about__k rise">关于</p>
+    <h1 class="about__title display rise" style="--i:1">
+      你好，<br />这里是 <span class="about__name">{site.name}<span class="about__dot">.</span></span>
+    </h1>
+    <div class="about__grid">
+      <div class="about__text rise" style="--i:2">
+        <p class="about__big">这里记录技术、阅读与生活。</p>
+        <p>原型阶段使用示例内容，正式文章会陆续替换。</p>
+        <h2 class="display">联系</h2>
+        <ul class="links">
+          {site.social.map((l) => (
+            <li><a href={url(l.href)}><Icon name={l.icon} size={18} /><span>{l.label}</span><span class="links__go" aria-hidden="true">→</span></a></li>
+          ))}
+        </ul>
+      </div>
 
-<BaseLayout
-  title={pageTitle('关于')}
-  description={`关于 ${site.name}`}
-  activeNav="about"
->
-  <article class="about prose">
-    <h1>关于</h1>
+      <!-- 借书卡：统计数字像盖上去的日期章 -->
+      <aside class="lib rise" style="--i:3" aria-label="站点概况">
+        <p class="lib__h"><span class="display">{site.name}</span><span class="mono">No. {String(s.posts).padStart(3, '0')}</span></p>
+        <dl>
+          <div><dt>文章</dt><dd><span class="lib__stamp">{s.posts} 篇</span></dd></div>
+          <div><dt>字数</dt><dd><span class="lib__stamp">{s.words.toLocaleString('zh-CN')}</span></dd></div>
+          <div><dt>第一篇</dt><dd><span class="lib__stamp">{s.first ? fmtDate(s.first) : '—'}</span></dd></div>
+          <div><dt>最近更新</dt><dd><span class="lib__stamp lib__stamp--red">{s.last ? fmtDate(s.last) : '—'}</span></dd></div>
+        </dl>
+        <p class="lib__foot">{site.description}</p>
+      </aside>
+    </div>
 
-    <p>{site.author.bio}</p>
-
-    <p>
-      这里记录技术、阅读与生活。原型阶段使用示例内容，正式文章会陆续替换。
-    </p>
-
-    <h2>联系</h2>
-
-    <ul class="about__links">
-      {site.social.map((link) => (
-        <li>
-          <a href={link.href}>
-            <Icon name={link.icon} size={18} />
-            <span>{link.label}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </article>
-</BaseLayout>
-
+    <section class="colophon rise" aria-labelledby="colo">
+      <h2 id="colo" class="display">版权页</h2>
+      <dl>
+        <div><dt>框架</dt><dd>Astro 静态生成，文章是仓库里的 Markdown / MDX</dd></div>
+        <div><dt>字体</dt><dd>Fraunces、Geist、Noto Serif SC（按页面用字子集化），全部自托管</dd></div>
+        <div><dt>搜索</dt><dd>Pagefind 构建期全文索引，按 <kbd class="key">⌘</kbd> <kbd class="key">K</kbd> 或 <kbd class="key">/</kbd> 打开</dd></div>
+        <div><dt>主题</dt><dd>白天是纸，夜里是一张深色卡纸；右上角的墙面开关可以切换</dd></div>
+        <div><dt>组件</dt><dd>按键、开关、勾选框等细节参考了 Uiverse.io 社区的开源组件（MIT），重新手写</dd></div>
+      </dl>
+    </section>
+  </section>
+</Base>
 <style>
   .about {
-    max-width: calc(var(--measure) + 2 * var(--gutter));
-    margin-inline: auto;
-    padding-block-start: clamp(2.5rem, 6vw, 4.5rem);
-    padding-inline: var(--gutter);
+    padding-top: clamp(16px, 4vw, 40px);
   }
-
-  .about h1 {
-    padding-block-end: var(--space-4);
-    border-bottom: 1px solid var(--border);
+  .about__k {
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--ink);
   }
-
-  .about__links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin: var(--space-4) 0 0;
+  .about__title {
+    margin-top: clamp(20px, 3vw, 32px);
+    font-size: clamp(46px, 8vw, 108px);
+    letter-spacing: -0.04em;
+    line-height: 1.02;
+  }
+  .about__name {
+    font-style: italic;
+  }
+  .about__dot {
+    color: var(--red);
+    font-style: normal;
+  }
+  .about__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+    gap: clamp(32px, 6vw, 96px);
+    margin-top: clamp(40px, 6vw, 72px);
+    align-items: start;
+  }
+  .about__text {
+    font-size: 17.5px;
+    line-height: 1.9;
+    color: var(--ink-2);
+  }
+  .about__big {
+    font: 600 clamp(24px, 2.6vw, 34px) / 1.5 var(--f-display);
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+  .about__text h2 {
+    margin: 48px 0 8px;
+    font-size: 24px;
+    color: var(--ink);
+  }
+  .links {
     padding: 0;
     list-style: none;
+    border-top: 1px solid var(--ink);
   }
-
-  .about__links li {
-    margin: 0;
-  }
-
-  .about__links a {
-    display: inline-flex;
+  .links a {
+    display: flex;
     align-items: center;
-    gap: var(--space-2);
-    min-height: 44px;
-    padding: 0 var(--space-4);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    background: var(--surface);
-    color: var(--fg);
-    font-size: var(--text-sm);
+    gap: 14px;
+    height: 58px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
+    font-size: 17px;
     font-weight: 500;
-    text-decoration: none;
-    transition:
-      color var(--duration-fast) var(--ease-out),
-      border-color var(--duration-fast) var(--ease-out),
-      background-color var(--duration-fast) var(--ease-out);
+    transition: padding 0.3s var(--ease), background 0.2s;
+  }
+  .links__go {
+    margin-left: auto;
+    color: var(--red);
+    transition: transform 0.3s var(--ease);
+  }
+  .links a:hover {
+    padding-left: 10px;
+    background: var(--hi-soft);
+  }
+  .links a:hover .links__go {
+    transform: translateX(-10px);
   }
 
-  .about__links a:hover {
-    color: var(--accent);
-    border-color: var(--border-strong);
-    background: var(--surface-muted);
+  .lib {
+    position: sticky;
+    top: calc(var(--nav-h) + 40px);
+    padding: 18px 20px 16px;
+    background: #f6ecd2;
+    color: #2b261d;
+    border: 1px solid #d6c79f;
+    rotate: 1.2deg;
+    box-shadow: 4px 5px 0 rgb(0 0 0 / 0.06);
+  }
+  :global([data-theme='dark']) .lib {
+    background: #e7dcc0;
+    filter: brightness(0.92);
+  }
+  .lib__h {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #2b261d;
+  }
+  .lib__h .display {
+    font-size: 24px;
+  }
+  .lib__h .mono {
+    font-size: 12px;
+    color: #a32812;
+  }
+  .lib dl {
+    margin-top: 2px;
+  }
+  .lib dl div {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    align-items: center;
+    min-height: 46px;
+    border-bottom: 1px solid #cdbb8c;
+  }
+  .lib dt {
+    font-size: 13px;
+    color: #5b5240;
+    border-right: 1px solid #cdbb8c;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+  }
+  .lib dd {
+    padding-left: 14px;
+  }
+  /* 印章：边框、轻微旋转、颜色不均匀 */
+  .lib__stamp {
+    display: inline-block;
+    padding: 1px 8px;
+    border: 1.5px solid #2f4a7a;
+    border-radius: 3px;
+    font: 600 14px/1.5 var(--f-mono);
+    color: #2f4a7a;
+    rotate: -3deg;
+    mask-image: radial-gradient(circle at 30% 40%, #000 60%, rgb(0 0 0 / 0.75) 100%);
+  }
+  .lib div:nth-child(2n) .lib__stamp {
+    rotate: 2deg;
+  }
+  .lib__stamp--red {
+    border-color: #a32812;
+    color: #a32812;
+  }
+  .lib__foot {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #5b5240;
+  }
+
+  .colophon {
+    max-width: 760px;
+    margin-top: clamp(64px, 9vw, 110px);
+    padding-top: 14px;
+    border-top: 2px solid var(--ink);
+  }
+  .colophon h2 {
+    font-size: 24px;
+  }
+  .colophon dl {
+    margin-top: 14px;
+  }
+  .colophon dl div {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--rule-2);
+    font-size: 15px;
+  }
+  .colophon dt {
+    font-weight: 600;
+  }
+  .colophon dd {
+    color: var(--ink-2);
+  }
+  .colophon .key {
+    --h: 22px;
+    font-size: 11px;
+  }
+  @media (max-width: 860px) {
+    .about__grid {
+      grid-template-columns: 1fr;
+    }
+    .lib {
+      position: relative;
+      top: 0;
+      max-width: 420px;
+    }
   }
 </style>

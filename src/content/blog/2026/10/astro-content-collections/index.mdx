@@ -11,7 +11,7 @@ cover: ./cover.png
 coverAlt: 浅色背景上的文章标题与分隔线，展示博客封面排版
 ---
 
-import { Image } from 'astro:assets';
+import Figure from '../../../../../components/Figure.astro';
 import diagram from './diagram.png';
 
 内容集合（Content Collections）解决的问题很具体：把散落在目录里的 Markdown 变成有类型、可校验、可查询的数据。对个人博客来说，它的价值不在“功能多”，而在“坏数据会在构建期失败”。
@@ -24,7 +24,15 @@ import diagram from './diagram.png';
 
 文章以目录为单位，图片与正文放在一起。这样迁移时不需要额外维护一份资源映射，相对路径也不会因为文章换位置而失效。
 
-<Image src={diagram} alt="Markdown 经 schema 校验后生成静态页面与索引的流程示意" width={1200} height={630} />
+![文章目录结构：年月目录下每篇文章一个文件夹，里面是 index.mdx、cover.png 和 diagram.png](./tree.png "写作时：一篇文章就是一个目录") ![构建后同一张图被输出成多种宽度的 avif 和 webp](./output.png "构建后：浏览器按屏幕宽度自己挑一张")
+
+构建时，这些图片会被裁成几种宽度、转成 avif / webp，并带上宽高，页面加载时不会跳动。
+
+<Figure src={diagram} alt="Markdown 经 schema 校验后生成静态页面与索引的流程示意" caption="构建流程：坏数据在 schema 这一步就会失败，不会流到页面上。" />
+
+站外的图片也可以直接引用，比如这篇文章在构建期生成的分享卡片（地址末尾的 `#1200x630` 用来声明宽高）：
+
+![这篇文章的分享卡片：纸面背景、墨色边框和文章标题](https://xlyxh.github.io/deskbox-blog/og/astro-content-collections.png#1200x630 "分享卡片，以外链图片的方式引用")
 
 ## schema 示例
 

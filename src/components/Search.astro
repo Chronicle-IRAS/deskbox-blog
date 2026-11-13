@@ -1,0 +1,236 @@
+---
+import { getPosts, fmtDate } from '../lib/posts';
+import { postUrl, url } from '../lib/url';
+import { tags } from '../config';
+import Icon from './Icon.astro';
+const posts = await getPosts();
+const index = posts.map((p) => ({ t: p.data.title, d: p.data.description, u: postUrl(p.data.slug), date: fmtDate(p.data.pubDate), tags: p.data.tags }));
+---
+<dialog class="sp" data-search aria-label="搜索文章">
+  <div class="sp__panel" data-search-panel>
+    <div class="sp__head">
+      <span class="sp__label">检索</span>
+      <span class="sp__hint2 muted">标题 · 正文 · 标签</span>
+      <button type="button" class="sp__esc" data-search-close aria-label="关闭搜索"><kbd class="key">Esc</kbd></button>
+    </div>
+    <label class="sp__field">
+      <Icon name="search" size={20} />
+      <input type="search" placeholder="想找点什么？" autocomplete="off" spellcheck="false" aria-label="搜索关键词" data-search-input />
+    </label>
+    <div class="sp__body" data-search-body>
+      <p class="sp__status" data-search-status aria-live="polite">最近文章</p>
+      <ul class="sp__list" role="listbox" aria-label="搜索结果" data-search-list></ul>
+      <div class="sp__tags" data-search-tags>
+        {tags.map((t) => <a class="tag" href={url(`/tags/${t.slug}/`)}>{t.name}</a>)}
+      </div>
+    </div>
+    <div class="sp__foot">
+      <span><kbd class="key">↑</kbd><kbd class="key">↓</kbd> 选择</span>
+      <span><kbd class="key">↵</kbd> 打开</span>
+      <span class="sp__grow"></span>
+      <span class="mono">pagefind</span>
+    </div>
+  </div>
+  <script type="application/json" data-search-index set:html={JSON.stringify(index)} />
+</dialog>
+
+<style>
+  .sp {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    padding: clamp(70px, 12vh, 130px) var(--gutter) 24px;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+  }
+  .sp::backdrop {
+    background: rgb(22 21 19 / 0.42);
+  }
+  .sp[open] .sp__panel {
+    animation: drop 0.32s var(--ease);
+  }
+  @keyframes drop {
+    from { opacity: 0; transform: translateY(-10px) rotate(-0.6deg); }
+  }
+  /* 一张实心的纸：墨线边框 + 硬投影，没有毛玻璃 */
+  .sp__panel {
+    width: min(100%, 620px);
+    margin-inline: auto;
+    background: var(--sheet);
+    border: 1.5px solid var(--ink);
+    border-radius: 6px;
+    box-shadow: 8px 8px 0 var(--ink);
+    overflow: hidden;
+  }
+  .sp__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px 10px 18px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper-2);
+  }
+  .sp__label {
+    font: 700 15px/1 var(--f-display);
+  }
+  .sp__hint2 {
+    font-size: 12.5px;
+    flex: 1;
+  }
+  .sp__field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 16px 6px;
+    padding: 0 14px;
+    height: 56px;
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+    background: var(--paper);
+    box-shadow: inset 3px 3px 0 var(--paper-2);
+    color: var(--ink-2);
+    transition: box-shadow 0.2s;
+  }
+  .sp__field:focus-within {
+    box-shadow: inset 3px 3px 0 var(--paper-2), 0 0 0 3px var(--hi-soft);
+  }
+  .sp__field input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    border: 0;
+    background: none;
+    outline: none;
+    font-size: 18px;
+    color: var(--ink);
+    caret-color: var(--red);
+  }
+  .sp__field input::placeholder {
+    color: var(--ink-3);
+  }
+  .sp__field input::-webkit-search-cancel-button {
+    display: none;
+  }
+  .sp__body {
+    max-height: min(54vh, 460px);
+    overflow: auto;
+    padding: 6px 16px 14px;
+    overscroll-behavior: contain;
+  }
+  .sp__status {
+    padding: 8px 0 6px;
+    font-size: 12.5px;
+    color: var(--ink-3);
+  }
+  /* 打字机式的加载：字一个个敲出来 */
+  .sp__status :global(.tw) {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: bottom;
+    border-right: 2px solid var(--red);
+    width: 5.2em;
+    animation: type 1.2s steps(5) infinite, caret 0.5s step-end infinite alternate;
+  }
+  @keyframes type {
+    from { width: 0; }
+  }
+  @keyframes caret {
+    50% { border-color: transparent; }
+  }
+  .sp__list {
+    list-style: none;
+    padding: 0;
+  }
+  .sp__list :global(li + li) {
+    border-top: 1px dashed var(--rule);
+  }
+  .sp__list :global(a) {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2px 14px;
+    padding: 12px 12px 12px 18px;
+  }
+  .sp__list :global(a::before) {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 14px;
+    bottom: 14px;
+    width: 3px;
+    background: var(--red);
+    transform: scaleY(0);
+    transition: transform 0.2s var(--ease);
+  }
+  .sp__list :global(a[aria-selected='true']),
+  .sp__list :global(a:hover) {
+    background: var(--paper-2);
+  }
+  .sp__list :global(a[aria-selected='true']::before) {
+    transform: none;
+  }
+  .sp__list :global(.r-t) {
+    font: 600 16px/1.45 var(--f-display);
+  }
+  .sp__list :global(.r-date) {
+    font: 12px/2 var(--f-mono);
+    color: var(--ink-3);
+  }
+  .sp__list :global(.r-d) {
+    grid-column: 1 / -1;
+    font-size: 13px;
+    color: var(--ink-2);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .sp__list :global(mark) {
+    background: var(--hi-soft);
+    color: inherit;
+    padding: 0 1px;
+  }
+  .sp__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 0 4px;
+  }
+  .sp__foot {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 10px 18px;
+    border-top: 1px solid var(--rule);
+    font-size: 12px;
+    color: var(--ink-3);
+  }
+  .sp__foot .key {
+    --h: 22px;
+    margin-right: 3px;
+    font-size: 11px;
+  }
+  .sp__grow {
+    flex: 1;
+  }
+  @media (max-width: 600px) {
+    .sp__foot,
+    .sp__hint2 {
+      display: none;
+    }
+    .sp__head {
+      justify-content: space-between;
+    }
+    .sp {
+      padding-top: 18px;
+    }
+    .sp__panel {
+      box-shadow: 5px 5px 0 var(--ink);
+    }
+  }
+</style>

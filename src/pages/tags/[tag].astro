@@ -1,95 +1,51 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostList from '../../components/PostList.astro';
-import { pageTitle } from '../../data/site';
-import { tags } from '../../data/tags';
-import type { PostSummary } from '../../lib/posts';
-import { getPublishedPosts, toPostSummary } from '../../lib/posts';
-
-interface Tag {
-  name: string;
-  slug: string;
-  description?: string;
-}
-
-interface Props {
-  tag: Tag;
-  count: number;
-  posts: PostSummary[];
-}
-
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import PostRow from '../../components/PostRow.astro';
+import Preview from '../../components/Preview.astro';
+import Icon from '../../components/Icon.astro';
+import { getPosts } from '../../lib/posts';
+import { cardData } from '../../lib/meta';
+import { tags } from '../../config';
+import { url, tagUrl } from '../../lib/url';
 export async function getStaticPaths() {
-  const allPosts = await getPublishedPosts();
-  const counts = new Map<string, number>();
-
-  for (const post of allPosts) {
-    for (const tag of post.data.tags) {
-      counts.set(tag, (counts.get(tag) ?? 0) + 1);
-    }
-  }
-
-  return tags
-    .map((tag) => ({
-      tag,
-      count: counts.get(tag.name) ?? 0,
-    }))
-    .filter(({ count }) => count > 0)
-    .map(({ tag, count }) => ({
-      params: { tag: tag.slug },
-      props: {
-        tag,
-        count,
-        posts: allPosts
-          .filter((post) => post.data.tags.includes(tag.name))
-          .map(toPostSummary),
-      },
-    }));
+  return tags.map((t) => ({ params: { tag: t.slug }, props: { t } }));
 }
-
-const { tag, count, posts } = Astro.props as Props;
+const { t } = Astro.props;
+const posts = (await getPosts()).filter((p) => (p.data.tags as string[]).includes(t.name));
+const cards = await Promise.all(posts.map(cardData));
 ---
-
-<BaseLayout
-  title={pageTitle(`#${tag.name}`)}
-  description={tag.description ?? `标签 ${tag.name} 下的文章。`}
->
-  <section class="tag-page">
-    <header class="tag-page__header">
-      <h1>#{tag.name}</h1>
-      <p>
-        {tag.description}
-        <span aria-hidden="true"> · </span>
-        {count} 篇
-      </p>
-    </header>
-
-    <PostList posts={posts} emptyText="这个标签下还没有文章。" />
-  </section>
-</BaseLayout>
-
+<Base title={`#${t.name}`} description={`${t.name}：${t.description}。DeskBox 中带有该标签的文章。`}>
+  <PageHead eyebrow={`标签 · /${t.slug}`} title={`#${t.name}`} count={cards.length} lead={t.description}>
+    <nav class="others rise" style="--i:3" aria-label="其他标签">
+      <a class="tag tag--back" href={url('/tags/')}>← 全部标签</a>
+      {tags.filter((x) => x.slug !== t.slug).map((x) => <a class="tag" href={tagUrl(x.slug)}>{x.name}</a>)}
+    </nav>
+  </PageHead>
+  <div class="wrap">
+    {cards.length ? <ol class="rows">{cards.map((p, i) => <PostRow p={p} index={i} />)}</ol>
+      : <p class="empty muted">这个标签下还没有文章。<a href={url('/blog/')}>看看全部文章 <Icon name="right" size={14} /></a></p>}
+  </div>
+  <Preview />
+</Base>
 <style>
-  .tag-page {
-    max-width: var(--container);
-    margin-inline: auto;
-    padding-inline: var(--gutter);
+  .others {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 8px;
+    margin-top: 24px;
   }
-
-  .tag-page__header {
-    padding-block-end: var(--space-4);
-    border-bottom: 1px solid var(--border);
+  .rows {
+    padding: 0;
   }
-
-  .tag-page__header h1 {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: var(--text-h1);
-    font-weight: 600;
-    line-height: 1.1;
+  .empty {
+    padding: 60px 0;
+    text-align: center;
   }
-
-  .tag-page__header p {
-    margin: var(--space-2) 0 0;
-    color: var(--fg-muted);
-    font-size: var(--text-sm);
+  .empty a {
+    color: var(--red-ink);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
   }
 </style>

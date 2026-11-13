@@ -1,162 +1,333 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { pageTitle } from '../data/site';
-import { tags } from '../data/tags';
-import { dayKey, formatDate } from '../lib/format';
-import { getPublishedPosts, getPostSlug } from '../lib/posts';
-
-const posts = await getPublishedPosts();
-const groups = new Map<string, typeof posts>();
-
-for (const post of posts) {
-  const year = dayKey(post.data.pubDate).slice(0, 4);
-  const group = groups.get(year);
-  if (group) group.push(post);
-  else groups.set(year, [post]);
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { getPosts, dayKey, fmtShort, year, wordCount } from '../lib/posts';
+import { postUrl } from '../lib/url';
+const posts = await getPosts();
+// 按年 → 月分组
+const years = new Map<string, Map<string, typeof posts>>();
+for (const p of posts) {
+  const y = year(p.data.pubDate);
+  const m = dayKey(p.data.pubDate).slice(5, 7);
+  if (!years.has(y)) years.set(y, new Map());
+  const ym = years.get(y)!;
+  ym.set(m, [...(ym.get(m) ?? []), p]);
 }
-
-const years = [...groups.entries()].sort(([a], [b]) => b.localeCompare(a));
-
-const tagSlug = (name: string) =>
-  tags.find((tag) => tag.name === name)?.slug;
+// 写作日历：最近 53 周
+const byDay = new Map<string, typeof posts>();
+posts.forEach((p) => byDay.set(dayKey(p.data.pubDate), [...(byDay.get(dayKey(p.data.pubDate)) ?? []), p]));
+const today = new Date(dayKey(new Date()) + 'T00:00:00Z');
+const end = new Date(today);
+end.setUTCDate(end.getUTCDate() + (6 - end.getUTCDay()));
+const start = new Date(end);
+start.setUTCDate(start.getUTCDate() - 53 * 7 + 1);
+const weeks: { key: string; n: number; future: boolean; titles: string[]; slug?: string }[][] = [];
+const months: { label: string; col: number }[] = [];
+for (let d = new Date(start), i = 0; d <= end; d.setUTCDate(d.getUTCDate() + 1), i++) {
+  const key = d.toISOString().slice(0, 10);
+  const col = Math.floor(i / 7);
+  (weeks[col] ??= []).push({ key, n: byDay.get(key)?.length ?? 0, future: d > today, titles: (byDay.get(key) ?? []).map((p) => p.data.title), slug: byDay.get(key)?.[0]?.data.slug });
+  if (d.getUTCDate() === 1) months.push({ label: `${d.getUTCMonth() + 1}月`, col });
+}
+const totalWords = posts.reduce((s, p) => s + wordCount(p.body ?? ''), 0);
+const activeDays = byDay.size;
 ---
+<Base title="归档" description="DeskBox 全部文章的时间线与写作日历。">
+  <PageHead eyebrow="按时间" title="归档" count={posts.length} lead={`${activeDays} 个写作日，共 ${totalWords.toLocaleString('zh-CN')} 字。`} />
 
-<BaseLayout
-  title={pageTitle('归档')}
-  description="按年份浏览 DeskBox 的文章。"
->
-  <section class="archive">
-    <header class="archive__header">
-      <h1>归档</h1>
-      <p>{posts.length} 篇</p>
-    </header>
-
-    {years.map(([year, items]) => (
-      <section class="archive__year" aria-labelledby={`year-${year}`}>
-        <h2 id={`year-${year}`}>{year}</h2>
-        <ul class="archive__list">
-          {items.map((post) => (
-            <li class="archive__item">
-              <time datetime={dayKey(post.data.pubDate)}>
-                {formatDate(post.data.pubDate)}
-              </time>
-              <a class="archive__title" href={`/blog/${getPostSlug(post)}/`}>
-                {post.data.title}
-              </a>
-              <span class="archive__tags">
-                {post.data.tags.map((tag) => {
-                  const slug = tagSlug(tag);
-                  return slug ? (
-                    <a href={`/tags/${slug}/`}>#{tag}</a>
+  <section class="wrap cal-wrap rise" style="--i:3" aria-label="写作日历">
+    <div class="cal">
+      <div class="cal__head">
+        <p class="kicker">写作日历 · 最近一年</p>
+        <p class="cal__legend mono" aria-hidden="true">少 <i class="l0"></i><i class="l1"></i><i class="l2"></i> 多</p>
+      </div>
+      <div class="cal__scroll" data-cal-scroll>
+        <div class="cal__grid" style={`--cols:${weeks.length}`} role="img" aria-label={`最近一年的写作日历：${activeDays} 天有文章发布`}>
+          <div class="cal__months" aria-hidden="true">
+            {months.map((m) => <span style={`grid-column:${m.col + 1}`}>{m.label}</span>)}
+          </div>
+          <div class="cal__days">
+            {weeks.map((w) => (
+              <div class="cal__col">
+                {w.map((c) =>
+                  c.n ? (
+                    <span class={`cell l${Math.min(2, c.n)} hit`} title={`${c.key} · ${c.titles.join('、')}`}></span>
                   ) : (
-                    <span>#{tag}</span>
-                  );
-                })}
-              </span>
-            </li>
+                    <span class={`cell${c.future ? ' fut' : ''}`} title={c.key} aria-hidden="true"></span>
+                  ),
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap tl" data-timeline aria-label="时间线">
+    <span class="tl__rail" aria-hidden="true"><i></i></span>
+    {[...years.entries()].map(([y, ms]) => (
+      <div class="tl__year">
+        <h2 class="tl__y display"><span>{y}</span><small class="mono">{[...ms.values()].flat().length} 篇</small></h2>
+        <div class="tl__months">
+          {[...ms.entries()].map(([m, list]) => (
+            <div class="tl__month">
+              <h3 class="tl__m mono">{Number(m)} 月</h3>
+              <ol>
+                {list.map((p) => (
+                  <li class="tl__item" data-tl-item>
+                    <a href={postUrl(p.data.slug)}>
+                      <span class="tl__dot" aria-hidden="true"></span>
+                      <time class="mono" datetime={p.data.pubDate.toISOString()}>{fmtShort(p.data.pubDate)}</time>
+                      <span class="tl__t">{p.data.title}</span>
+                      <span class="tl__tags">{(p.data.tags as string[]).map((t) => <span>#{t}</span>)}</span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </div>
           ))}
-        </ul>
-      </section>
+        </div>
+      </div>
     ))}
   </section>
-</BaseLayout>
+</Base>
 
 <style>
-  .archive {
-    max-width: var(--container);
-    margin-inline: auto;
-    padding-inline: var(--gutter);
+  .cal {
+    padding: 20px 22px 16px;
+    background: var(--sheet);
+    border: 1px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--paper-2), 5px 5px 0 1px var(--rule-2);
   }
-
-  .archive__header {
-    padding-block-end: var(--space-4);
-    border-bottom: 1px solid var(--border);
+  .cal__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
   }
-
-  .archive__header h1 {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: var(--text-h1);
-    font-weight: 600;
-    line-height: 1.1;
+  .cal__legend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--ink-3);
   }
-
-  .archive__header p {
-    margin: var(--space-2) 0 0;
-    color: var(--fg-muted);
-    font-size: var(--text-sm);
+  .cal__legend i {
+    width: 11px;
+    height: 11px;
+    border-radius: 1px;
+    background: var(--paper-2);
   }
-
-  .archive__year {
-    margin-block-start: var(--space-7);
+  .cal__legend i.l1,
+  .cell.l1 {
+    background: color-mix(in srgb, var(--ink) 45%, var(--paper-2));
   }
-
-  .archive__year h2 {
-    margin: 0 0 var(--space-3);
-    color: var(--fg-muted);
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    font-weight: 600;
+  .cal__legend i.l2,
+  .cell.l2 {
+    background: var(--red);
   }
-
-  .archive__list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    border-top: 1px solid var(--border);
+  .cal__scroll {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    padding-bottom: 4px;
   }
-
-  .archive__item {
+  .cal__grid {
+    min-width: 720px;
+  }
+  .cal__months {
     display: grid;
-    grid-template-columns: 96px minmax(0, 1fr) auto;
-    gap: var(--space-4);
-    align-items: baseline;
-    padding-block: var(--space-3);
-    border-bottom: 1px solid var(--border);
+    grid-template-columns: repeat(var(--cols), 1fr);
+    margin-bottom: 6px;
+    font: 11px var(--f-mono);
+    color: var(--ink-3);
   }
-
-  .archive__item time {
-    color: var(--fg-muted);
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
+  .cal__months span {
     white-space: nowrap;
   }
-
-  .archive__title {
-    color: var(--fg);
-    text-decoration: none;
+  .cal__days {
+    display: grid;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    gap: 3px;
+  }
+  .cal__col {
+    display: grid;
+    gap: 3px;
+  }
+  .cell {
+    display: block;
+    aspect-ratio: 1;
+    border-radius: 1px;
+    background: var(--paper-2);
+    transition: transform 0.3s var(--spring);
+  }
+  .cell.fut {
+    opacity: 0.35;
+  }
+  span.cell.hit {
+    background: var(--ink);
+    rotate: -6deg;
+  }
+  span.cell.hit:hover {
+    transform: scale(1.7);
+    position: relative;
+    z-index: 1;
   }
 
-  .archive__title:hover {
-    color: var(--accent);
+  /* ---------- 时间线 ---------- */
+  .tl {
+    position: relative;
+    margin-top: clamp(56px, 8vw, 96px);
+    padding-left: 0;
   }
-
-  .archive__title:focus-visible {
-    outline: 2px solid var(--focus);
-    outline-offset: 2px;
+  .tl__rail {
+    position: absolute;
+    left: calc(240px + 7px);
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: repeating-linear-gradient(180deg, var(--rule-2) 0 4px, transparent 4px 8px);
   }
-
-  .archive__tags {
+  .tl__rail i {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    transform-origin: top;
+    transform: scaleY(var(--draw, 0));
+  }
+  .tl__year {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+  .tl__year + .tl__year {
+    margin-top: 72px;
+  }
+  .tl__y {
+    position: sticky;
+    top: calc(var(--nav-h) + 40px);
+    align-self: start;
+    display: grid;
+    font-size: clamp(56px, 6.4vw, 92px);
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+    color: var(--ink);
+  }
+  .tl__y small {
+    white-space: nowrap;
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--ink-2);
+  }
+  .tl__months {
+    padding-left: 48px;
+  }
+  .tl__month + .tl__month {
+    margin-top: 40px;
+  }
+  .tl__m {
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--red-ink);
+  }
+  .tl ol {
+    padding: 0;
+    list-style: none;
+  }
+  .tl__item a {
+    position: relative;
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    transition: padding 0.35s var(--ease);
+  }
+  .tl__dot {
+    position: absolute;
+    left: -48px;
+    top: 50%;
+    width: 15px;
+    height: 15px;
+    margin: -7px 0 0 -0.5px;
+    border-radius: 2px;
+    border: 1.5px solid var(--ink);
+    background: var(--paper);
+    transition: background 0.25s, transform 0.3s var(--spring);
+  }
+  /* 读到这里就打一个勾（参考 Uiverse 的勾选框动画） */
+  .tl__dot::after {
+    content: '';
+    position: absolute;
+    left: 3.5px;
+    top: 0.5px;
+    width: 4px;
+    height: 8px;
+    border: solid var(--paper);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) scale(0);
+    transition: transform 0.3s var(--spring);
+  }
+  .tl__item.passed .tl__dot {
+    background: var(--ink);
+  }
+  .tl__item.passed .tl__dot::after {
+    transform: rotate(45deg) scale(1);
+  }
+  .tl time {
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .tl__t {
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 1.5;
+    transition: color 0.25s;
+  }
+  .tl__tags {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    color: var(--fg-muted);
-    font-size: var(--text-xs);
+    gap: 10px;
+    font-size: 12.5px;
+    color: var(--ink-3);
   }
-
-  .archive__tags a {
-    color: var(--fg-muted);
-    text-decoration: none;
+  @media (hover: hover) {
+    .tl__item a:hover {
+      padding-left: 10px;
+    }
+    .tl__item a:hover .tl__t {
+      background: linear-gradient(var(--hi-soft), var(--hi-soft)) 0 88% / 100% 0.5em no-repeat;
+    }
+    .tl__item a:hover .tl__dot {
+      transform: rotate(-8deg) scale(1.15);
+    }
   }
-
-  .archive__tags a:hover {
-    color: var(--accent);
-  }
-
-  @media (max-width: 639px) {
-    .archive__item {
+  @media (max-width: 860px) {
+    .tl__rail {
+      left: 7px;
+    }
+    .tl__year {
       grid-template-columns: 1fr;
-      gap: var(--space-1);
+    }
+    .tl__y {
+      position: relative;
+      top: 0;
+      padding-left: 36px;
+      margin-bottom: 24px;
+      font-size: 64px;
+    }
+    .tl__months {
+      padding-left: 36px;
+    }
+    .tl__dot {
+      left: -36px;
+    }
+    .tl__item a {
+      grid-template-columns: 48px minmax(0, 1fr);
+    }
+    .tl__tags {
+      display: none;
     }
   }
 </style>

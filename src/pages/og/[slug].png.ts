@@ -1,40 +1,19 @@
 import type { APIContext } from 'astro';
-import sharp from 'sharp';
-import { formatDate } from '../../lib/format';
-import { renderOgSvg } from '../../lib/og';
-import {
-  getPublishedPosts,
-  toPostSummary,
-  type BlogEntry,
-} from '../../lib/posts';
+import { getPosts, fmtDate, readingMinutes } from '../../lib/posts';
+import { ogPng } from '../../lib/og';
+import { site } from '../../config';
 
 export async function getStaticPaths() {
-  const posts = await getPublishedPosts();
-
-  return posts.map((post) => ({
-    params: { slug: post.data.slug },
-    props: { post },
-  }));
+  const posts = await getPosts();
+  return [
+    { params: { slug: 'default' }, props: { title: site.description, kicker: 'BLOG', foot: '技术 · 阅读 · 生活' } },
+    ...posts.map((p) => ({
+      params: { slug: p.data.slug },
+      props: { title: p.data.title, cover: (p.data.cover as any)?.fsPath, kicker: fmtDate(p.data.pubDate), foot: `${(p.data.tags as string[]).map((t) => '#' + t).join('  ') || '#随笔'}   ·   约 ${readingMinutes(p.body ?? '')} 分钟` },
+    })),
+  ];
 }
-
 export async function GET({ props }: APIContext) {
-  const { post } = props as { post: BlogEntry };
-  const summary = toPostSummary(post);
-
-  const svg = renderOgSvg({
-    title: post.data.title,
-    description: post.data.description,
-    date: formatDate(post.data.pubDate),
-    minutes: summary.readingMinutes,
-    tags: summary.tags,
-  });
-
-  const png = await sharp(Buffer.from(svg)).png({ compressionLevel: 9 }).toBuffer();
-
-  return new Response(png, {
-    headers: {
-      'Content-Type': 'image/png',
-      'Cache-Control': 'public, max-age=31536000, immutable',
-    },
-  });
+  const png = await ogPng(props as any);
+  return new Response(new Uint8Array(png), { headers: { 'Content-Type': 'image/png' } });
 }

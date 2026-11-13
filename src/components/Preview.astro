@@ -1,0 +1,88 @@
+---
+// 列表悬停时跟随鼠标的索引卡：胶带、横线、微微歪着
+---
+<div class="pv" data-preview aria-hidden="true">
+  <span class="pv__tape"></span>
+  <div class="pv__art"><img data-pv-img alt="" width="320" height="168" decoding="async" /></div>
+  <p class="pv__title" data-pv-title></p>
+  <p class="pv__desc" data-pv-desc></p>
+  <p class="pv__meta mono" data-pv-meta></p>
+</div>
+<style>
+  .pv {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 40;
+    width: 280px;
+    padding: 18px 18px 14px 26px;
+    margin: 26px 0 0 30px;
+    background:
+      linear-gradient(90deg, transparent 15px, rgb(200 50 26 / 0.55) 15px 16px, transparent 16px),
+      repeating-linear-gradient(180deg, transparent 0 23px, color-mix(in srgb, #3b6fb6 22%, transparent) 23px 24px),
+      #fffdf7;
+    background-position: 0 0, 0 9px, 0 0;
+    color: #161513;
+    border: 1px solid #d9d3c5;
+    box-shadow: 1px 2px 0 rgb(0 0 0 / 0.06), 6px 10px 22px -12px rgb(40 30 10 / 0.35);
+    pointer-events: none;
+    opacity: 0;
+    rotate: -2.5deg;
+    scale: 0.92;
+    transition: opacity 0.2s, scale 0.35s var(--spring);
+    will-change: transform;
+  }
+  :global([data-theme='dark']) .pv {
+    background-color: #efe9da;
+    border-color: #000;
+  }
+  .pv.on {
+    opacity: 1;
+    scale: 1;
+  }
+  .pv__tape {
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    width: 86px;
+    height: 22px;
+    margin-left: -43px;
+    rotate: 3deg;
+    background: rgb(240 228 190 / 0.78);
+    border-left: 2px dotted rgb(0 0 0 / 0.06);
+    border-right: 2px dotted rgb(0 0 0 / 0.06);
+  }
+  .pv__art {
+    display: none;
+    margin-bottom: 10px;
+    border: 1px solid #d9d3c5;
+    background: #f1eee8;
+  }
+  .pv.has-img .pv__art {
+    display: block;
+  }
+  .pv__art img {
+    width: 100%;
+    aspect-ratio: 300 / 158;
+    object-fit: contain;
+  }
+  .pv__title {
+    font: 600 16px/24px var(--f-display);
+  }
+  .pv__desc {
+    margin-top: 0;
+    font-size: 13px;
+    line-height: 24px;
+    color: #4f4b44;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .pv__meta {
+    margin-top: 0;
+    font-size: 11.5px;
+    line-height: 24px;
+    color: #a32812;
+  }
+</style>

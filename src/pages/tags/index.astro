@@ -1,61 +1,138 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import TagList from '../../components/TagList.astro';
-import { pageTitle } from '../../data/site';
-import { tags } from '../../data/tags';
-import { getPublishedPosts } from '../../lib/posts';
-
-const posts = await getPublishedPosts();
-const counts = new Map<string, number>();
-
-for (const post of posts) {
-  for (const tag of post.data.tags) {
-    counts.set(tag, (counts.get(tag) ?? 0) + 1);
-  }
-}
-
-const items = tags
-  .map((tag) => ({ ...tag, count: counts.get(tag.name) ?? 0 }))
-  .filter((tag) => tag.count > 0);
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import { getPosts, fmtDate } from '../../lib/posts';
+import { tags } from '../../config';
+import { tagUrl } from '../../lib/url';
+const posts = await getPosts();
+const list = tags.map((t) => ({ ...t, posts: posts.filter((p) => (p.data.tags as string[]).includes(t.name)) }));
+const untagged = posts.filter((p) => !p.data.tags.length).length;
 ---
-
-<BaseLayout
-  title={pageTitle('标签')}
-  description="按标签浏览 DeskBox 的文章。"
->
-  <section class="tags-index">
-    <header class="tags-index__header">
-      <h1>标签</h1>
-      <p>{items.length} 个标签</p>
-    </header>
-
-    <TagList items={items} />
-  </section>
-</BaseLayout>
-
+<Base title="标签" description="按主题浏览 DeskBox：前端、后端、工程实践、阅读与生活。">
+  <PageHead eyebrow="主题索引" title="标签" count={tags.length} countLabel="个" lead={`${posts.length} 篇文章分在 ${tags.length} 个主题下${untagged ? `，另有 ${untagged} 篇没有标签` : ''}。每张卡片是一个抽屉。`} />
+  <ul class="cards wrap">
+    {list.map((t, i) => (
+      <li class="rise" style={`--i:${i}`}>
+        <a class="ic" href={tagUrl(t.slug)} style={`--r:${[-1.2, 0.8, -0.4, 1.1, -0.9][i % 5]}deg`}>
+          <span class="ic__hole" aria-hidden="true"></span>
+          <span class="ic__top">
+            <span class="ic__slug mono">/{t.slug}</span>
+            <span class="ic__n"><b>{t.posts.length}</b> 篇</span>
+          </span>
+          <span class="ic__name display">{t.name}</span>
+          <span class="ic__desc">{t.description}</span>
+          <span class="ic__list">
+            {t.posts.slice(0, 3).map((p) => <span><i class="mono">{fmtDate(p.data.pubDate).slice(5)}</i>{p.data.title}</span>)}
+            {t.posts.length === 0 && <span class="muted">还没有文章</span>}
+          </span>
+          <span class="ic__go">打开 →</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</Base>
 <style>
-  .tags-index {
-    max-width: var(--container);
-    margin-inline: auto;
-    padding-inline: var(--gutter);
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 34px 26px;
+    padding: 0;
+    list-style: none;
   }
-
-  .tags-index__header {
-    padding-block-end: var(--space-4);
-    border-bottom: 1px solid var(--border);
+  /* 索引卡：横线纸、红色页边线、打孔，每张歪得不一样 */
+  .ic {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 330px;
+    padding: 30px 22px 20px 40px;
+    background:
+      linear-gradient(90deg, transparent 26px, color-mix(in srgb, var(--red) 50%, transparent) 26px 27px, transparent 27px),
+      repeating-linear-gradient(180deg, transparent 0 27px, color-mix(in srgb, #3b6fb6 16%, transparent) 27px 28px),
+      var(--sheet);
+    background-position: 0 0, 0 24px, 0 0;
+    border: 1px solid var(--rule-2);
+    rotate: var(--r);
+    box-shadow: 2px 2px 0 var(--paper-2);
+    transition: rotate 0.35s var(--spring), translate 0.35s var(--spring), box-shadow 0.35s var(--ease), border-color 0.2s;
   }
-
-  .tags-index__header h1 {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: var(--text-h1);
-    font-weight: 600;
+  .ic:hover,
+  .ic:focus-visible {
+    rotate: 0deg;
+    translate: -3px -4px;
+    border-color: var(--ink);
+    box-shadow: 7px 8px 0 var(--ink);
+  }
+  .ic__hole {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    margin-left: -6px;
+    border-radius: 50%;
+    background: var(--paper);
+    box-shadow: inset 1px 1px 2px rgb(0 0 0 / 0.25);
+  }
+  .ic__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .ic__n b {
+    font: 700 30px/1 var(--f-display);
+    color: var(--red);
+  }
+  .ic__name {
+    margin-top: 22px;
+    font-size: 38px;
     line-height: 1.1;
   }
-
-  .tags-index__header p {
-    margin: var(--space-2) 0 0;
-    color: var(--fg-muted);
-    font-size: var(--text-sm);
+  .ic__desc {
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 28px;
+    color: var(--ink-2);
+  }
+  .ic__list {
+    display: grid;
+    align-content: start;
+    margin-top: auto;
+    padding-top: 14px;
+    font-size: 13.5px;
+    line-height: 28px;
+  }
+  .ic__list span {
+    display: flex;
+    gap: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ic__list i {
+    font-style: normal;
+    font-size: 11.5px;
+    color: var(--ink-3);
+  }
+  .ic__go {
+    align-self: flex-end;
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--red-ink);
+    opacity: 0;
+    translate: -6px 0;
+    transition: opacity 0.2s, translate 0.3s var(--ease);
+  }
+  .ic:hover .ic__go,
+  .ic:focus-visible .ic__go {
+    opacity: 1;
+    translate: 0 0;
+  }
+  @media (hover: none) {
+    .ic__go { opacity: 1; translate: 0 0; }
   }
 </style>

@@ -1,40 +1,31 @@
 {
   "name": "deskbox-blog",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
-  "engines": {
-    "node": "^22.22.0 || ^24.0.0 || >=26.0.0"
-  },
+  "description": "DeskBox — 写代码，也写生活。",
   "scripts": {
     "dev": "astro dev",
-    "check": "astro check && tsc --noEmit",
-    "test": "vitest run",
-    "measure": "node scripts/measure-size.mjs",
-    "csp": "node scripts/csp-hashes.mjs",
-    "check:csp": "node scripts/csp-hashes.mjs --check",
-    "headers": "node scripts/build-headers.mjs",
-    "clean": "node scripts/clean.mjs",
-    "build": "npm run clean && astro build && pagefind --site dist && npm run csp && npm run headers",
+    "build": "astro build && node scripts/postbuild.mjs",
     "preview": "astro preview",
-    "test:e2e": "playwright test"
+    "check": "astro check",
+    "fonts": "python3 scripts/fetch-fonts.py",
+    "deploy": "node scripts/deploy.mjs"
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "^7.3.3",
-    "@astrojs/mdx": "^8.1.0",
+    "@astrojs/markdown-remark": "^7.3.8",
+    "@astrojs/mdx": "^8.1.5",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
-    "astro": "^7.4.1",
-    "pagefind": "^1.5.2",
+    "astro": "^7.4.11",
+    "github-slugger": "^2.0.0",
     "remark-gfm": "^4.0.1",
     "sharp": "^0.35.5"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.11",
-    "@axe-core/playwright": "^4.14.0",
-    "@playwright/test": "^1.64.1",
-    "@types/node": "^26.6.5",
-    "typescript": "^6.0.3",
-    "vitest": "^5.0.5"
+    "@astrojs/check": "^0.9.12",
+    "node-html-parser": "^9.0.7",
+    "pagefind": "^1.6.0",
+    "typescript": "^6.0.3"
   }
 }
